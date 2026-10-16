@@ -1,0 +1,60 @@
+/* 宽屏：左侧卡片、正文、右侧卡片 */
+@media (min-width: 1200px) {
+  #content-inner.layout:has(> #left-aside) {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr) 280px;
+    gap: 20px;
+    max-width: 1600px;
+    align-items: start;
+  }
+
+  #content-inner.layout:has(> #left-aside) > :first-child {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100% !important;
+    min-width: 0;
+  }
+
+  #content-inner.layout > #left-aside {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  #content-inner.layout:has(> #left-aside) > #aside-content {
+    grid-column: 3;
+    grid-row: 1;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* 点击主题的隐藏侧边栏按钮时 */
+  html.hide-aside #content-inner.layout:has(> #left-aside) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  html.hide-aside #content-inner.layout > #left-aside {
+    display: none;
+  }
+
+  html.hide-aside #content-inner.layout:has(> #left-aside) > :first-child {
+    grid-column: 1;
+  }
+}
+
+/* 较窄屏幕：左栏卡片放到内容下方，避免挤压正文 */
+@media (max-width: 1199px) {
+  #content-inner.layout:has(> #left-aside) {
+    flex-wrap: wrap;
+  }
+
+  #content-inner.layout > #left-aside {
+    order: 3;
+    width: 100%;
+    padding: 0;
+    margin-top: 20px;
+  }
+}
