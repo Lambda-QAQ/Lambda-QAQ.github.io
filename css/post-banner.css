@@ -1,0 +1,9 @@
+/* 文章顶部动图完整显示 */
+#page-header.post-bg {
+  height: 550px;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
+  background-color: #fff;
+}

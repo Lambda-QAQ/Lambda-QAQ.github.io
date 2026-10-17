@@ -320,7 +320,7 @@ window.addEventListener('load', () => {
     // Update stats
     const displayCount = enablePagination ? currentResultItems.length : resultItems.length
     const stats = languages.hits_stats.replace(/\$\{hits}/, displayCount)
-    $statsItem.innerHTML = `<hr><div class="search-result-stats">${stats}</div>`
+    $statsItem.innerHTML = `<div class="search-result-stats">${stats}</div>`
 
     // Handle pagination
     if (enablePagination) {

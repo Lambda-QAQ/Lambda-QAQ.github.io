@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World2</title>
+    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(4)/</url>
+    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+
+More info: Writing
+Run server$ hexo server
+
+More info: Server
+Generate static files$ hexo generate
+
+More info: Generating
+Deploy to remote sites$ hexo deploy
+
+More info: Deployment
+]]></content>
+      <categories>
+        <category>学习笔记0</category>
+        <category>笔记0</category>
+      </categories>
+      <tags>
+        <tag>a</tag>
+        <tag>b</tag>
+        <tag>c</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World4</title>
+    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(2)/</url>
+    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+
+More info: Writing
+Run server$ hexo server
+
+More info: Server
+Generate static files$ hexo generate
+
+More info: Generating
+Deploy to remote sites$ hexo deploy
+
+More info: Deployment
+]]></content>
+      <categories>
+        <category>学习笔记1</category>
+      </categories>
+      <tags>
+        <tag>e</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World3</title>
+    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(3)/</url>
+    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+
+More info: Writing
+Run server$ hexo server
+
+More info: Server
+Generate static files$ hexo generate
+
+More info: Generating
+Deploy to remote sites$ hexo deploy
+
+More info: Deployment
+]]></content>
+      <categories>
+        <category>学习笔记0</category>
+        <category>笔记1</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Hello World0</title>
+    <url>/2026/10/16/hello-world/</url>
+    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+
+More info: Writing
+Run server$ hexo server
+
+More info: Server
+Generate static files$ hexo generate
+
+More info: Generating
+Deploy to remote sites$ hexo deploy
+
+More info: Deployment
+]]></content>
+      <categories>
+        <category>学习笔记0</category>
+      </categories>
+      <tags>
+        <tag>a</tag>
+        <tag>b</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World1</title>
+    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC/</url>
+    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
+Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+
+More info: Writing
+Run server$ hexo server
+
+More info: Server
+Generate static files$ hexo generate
+
+More info: Generating
+Deploy to remote sites$ hexo deploy
+
+More info: Deployment
+]]></content>
+      <categories>
+        <category>学习笔记0</category>
+        <category>笔记0</category>
+      </categories>
+      <tags>
+        <tag>b</tag>
+        <tag>c</tag>
+      </tags>
+  </entry>
+</search>
