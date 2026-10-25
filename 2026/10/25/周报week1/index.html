@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>周报week1 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第一次写，评价的时候温柔点😢">
+<meta property="og:type" content="article">
+<meta property="og:title" content="周报week1">
+<meta property="og:url" content="https://lambda.monster/2026/10/25/%E5%91%A8%E6%8A%A5week1/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="第一次写，评价的时候温柔点😢">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-25T10:46:57.727Z">
+<meta property="article:modified_time" content="2026-10-25T11:19:59.093Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="周报">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "周报week1",
+  "url": "https://lambda.monster/2026/10/25/%E5%91%A8%E6%8A%A5week1/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-10-25T10:46:57.727Z",
+  "dateModified": "2026-10-25T11:19:59.093Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/10/25/%E5%91%A8%E6%8A%A5week1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '周报week1',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">周报week1</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">周报week1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-25T10:46:57.727Z" title="发表于 2026-10-25 18:46:57">2026-10-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-25T11:19:59.093Z" title="更新于 2026-10-25 19:19:59">2026-10-25</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>这周学了什么：</h1>
+<p>感觉二进制和逆向还是太困难了，一直在学基础，所以做的题少，复习了C语言，学了一些汇编和计算机基础。感觉要彻底搞明白这些还要起码在学一周基础，下周的重心可能不在做题上，而是基础学习与复习。</p>
+<p>下面的是一天时间内写的，不全，以后每天记录可能会更详细。</p>
+<p>这周学的和复习的：</p>
+<p>计算机体系结构：冯诺依曼结构，CPU从内存中取指令；每个内存单元有一个地址，地址为从0开始编号的整数，CPU通过地址找到相应的内存单元来读取其中的指令，一个地址所对应的内存单元只能存一字节；CPU中有寄存器，CPU通过eip寄存器来取地址，然后获取和执行指令；小端序字节是低地址保存整数的低位，如x86，大段序字节相反低地址保存整数的高位；MMU支持虚拟内存管理，直接传到内存的内存地址叫做物理地址，CPU到MMU的地址称为虚拟地址，MMU可以将VA映射为PA，以页为单位；储存器分为寄存器，缓存，内存，硬盘等，寄存器和缓存位于CPU中，前三种数据断电丢失，寄存器可以直接有指令控制，缓存机制可以便于CPU读取指令提升计算机性能。</p>
+<p>数制：数制是按进位原则计数的法则。常用N进制从0开始逢n进一，0到n被称为数码，在不同位置位权不同。n进制转为十进制按位权展开计算即可；十进制转n进制要整数小数部分分别转换，整数除n倒取余，小数乘n顺取整；二进制0+0=0，1+0=1，1+1高位进一。逻辑与为并且，逻辑或为或者，逻辑非取反；数值类型分为定点数和浮点数；定点数分为定点小数和定点整数，约定小数点左小右整，定点整数分为有符号整数和无符号整数。有符号整数有原码反码和补码三种表示形式，0的补码唯一。所有顶点小数都是纯小数，小于1。浮点数有阶码和位数两部分，有公式计算。</p>
+<p>编码：西文字符有ASCII码和EBCDIC表示，汉字编码有GB 2312-80编码和GBK，USC/Unicode汉字编码等等。汉字输入依靠输入编码，输出可以用点阵表示和矢量表示。</p>
+<p>C语言（复习）：C是编译型语言，编译器和连接器可以把C代码转换为C程序。C程序由一个或多个函数构成，必须有一个main函数且一定从main函数开始执行；include是预处理指令，可以引用头文件；//和/**/是注释，在程序运行时会被忽略；可以用关键字声明变量，变量命名要有效；c语言可以用=进行赋值，printf函数能打印，return语句会返回函数的值。C的数据类型有整数类型和浮点类型，整型分为有符号和无符号；char为整型，_bool是能表示0和1的无符号整型；float和double为浮点型；0前缀表示八进制，0x和0X前缀表示十六进制，l后缀表示long类型，ll后缀表示long long类型；用单引号可以表示一个字符常量；某些函数使用转换说明来识别值，转换说明通常为%加转换字符；sizeof运算符可以给出字节大小。字符串是多个字符序列，以空字符结尾；数组是一系列同类型元素的集合，声明是要确保声明了足够多的空间来储存字符串和空字符；字符串常量用双引号括起来表示；scanf函数可以输入字符；#define预处理可以创建常量，const可以创建不能修改的变量；strlen函数可以给出字符串长度。C中有赋值运算符和算术运算符等，运算需要一个或多个对象。表达式由运算符和对象组成，每个运算符具有优先级，先进行优先级高的运算，相等的由结合律运算，花括号括起来的语句可以成为一个块；C中有类型转换，有类型升级或降级，降级可能丢失数据。</p>
+<p>汇编：汇编是用助记符来表示机器码操作的语言，使用汇编器可以将助记符翻译为机器码。先学的x86intel汇编。暂时只学了助记符和基本格式，助记符+目标操作数+源操作数；mov可以复制源操作数到目标操作数，lea是取地址到目标操作数，add是加法，sub是减法，mul是乘法，div是除法，cmp是比较，实质是减法但不保存结果，影响标志位。and按位与，or按位或，not按位取反，xor按位异或。push为压栈，pop为出栈。标志寄存器中有zf，pf，of，sf，cf，执行指令后结果为0zf=1，反之zf=1。</p>
+<p>就学了这些好像。</p>
+<p>下周可能要学这些 ：Python基础，汇编，哈希与加密，可执行文件和一些计算机基础</p>
+<p>下周可能要复习这些：C语言，Linux、Shell 与文件操作，网络，HTTP ，JavaScript，HTML和一些计算机基础</p>
+<h1>这周做了什么什么题：</h1>
+<p>参加了极客2026，不用AI拼尽全力才做出了两个杂项。得努力学习和复习了。<p>
+<p>其他的题<p>
+<h2>easyre wp</h2>
+确实easy，在ida中打开，找到mean函数，flag就在里面。
+<img src="/img/周报week1/easyre.png" style="display:block; margin:0 auto;" alt="">
+<h2>不一样的flag wp</h2>
+<p>ida打开，找到主函数，能看出来是个小游戏</p>
+<img src="/img/周报week1/byy1.png" style="display:block; margin:0 auto;" alt="">
+<p>查看这行，可以看出这是一个5*5的迷宫得从*不碰一走到#</p>
+<img src="/img/周报week1/byy2.png" style="display:block; margin:0 auto;" alt="">
+<p>列出迷宫</p>
+<img src="/img/周报week1/byy3.png" style="display:block; margin:0 auto;" alt="">
+<p>得到应走的格式为下下下右右上上右右下下下，也就是222441144222</p>
+<img src="/img/周报week1/byy4.png" style="display:block; margin:0 auto;" alt="">
+<p>得到flag为flag{222441144222}。</p>
+<p><del>第一次写，写的很烂，评价的时候温柔点😢</del></p></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/10/25/%E5%91%A8%E6%8A%A5week1/">https://lambda.monster/2026/10/25/%E5%91%A8%E6%8A%A5week1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%91%A8%E6%8A%A5/">周报</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">这周学了什么：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">这周做了什么什么题：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">easyre wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">不一样的flag wp</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/25/%E5%91%A8%E6%8A%A5week1/" title="周报week1">周报week1</a><time datetime="2026-10-25T10:46:57.727Z" title="发表于 2026-10-25 18:46:57">2026-10-25</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/25/README/" title="README">README</a><time datetime="2026-10-25T03:29:05.729Z" title="发表于 2026-10-25 11:29:05">2026-10-25</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

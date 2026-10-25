@@ -1,127 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World2</title>
-    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(4)/</url>
-    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+    <title>README</title>
+    <url>/2026/10/25/README/</url>
+    <content><![CDATA[这是一个README，主要写一下一些碎碎念。
+这个blog用了hexo和butterfly主题，发在GitHub Pages上，好像建成在2026/10/15还是16号来着，得手动更新（应该会每天更，但每周一定更）。每篇笔记使用HTML语言这个好像不算编程语言编写。
+这个blog还在慢慢建设，暂时不会变了，以后可能还会有更多功能应该吧。
+这个blog主要是用来放一些学习笔记，一些解题记录什么的，每篇笔记在新学到相关的东西的话可能还会再更新，不只是ctf，主要是计算机，编程语言，ctf之类的。
+先避雷，记笔记不能占用太多时间，学东西才是重点，所以笔记中的一些基础和排版会使用ai，确保内容得我复习时能看懂，盯着电脑敲三四个小时改来改去再不满意删了真是太痛苦了太浪费时间了😢但是一些实操比如做题啊则会手动复现并配截图。
+每周都会有周报，周报会汇报了这周干了什么（当然只有跟ctf有关的），周报不会使用ai，我会尽量做到以下几点：
 
-More info: Writing
-Run server$ hexo server
+写出这周学了什么知识，做了那些题。
+排版整洁清楚，减少雷霆错字。
+语言尽量干净明白，让人能看懂，减少废话。
+用心整理，但不在上面浪费太多时间。
+学的知识要自己的话复述一遍，做题要有思考过程
 
-More info: Server
-Generate static files$ hexo generate
-
-More info: Generating
-Deploy to remote sites$ hexo deploy
-
-More info: Deployment
-]]></content>
-      <categories>
-        <category>学习笔记0</category>
-        <category>笔记0</category>
-      </categories>
+应该就这些了，能从这个README看出来，我写的东西挺烧心的毕竟语文水平就这样但我相信，写多了就会练出来，逐渐找到自己的风格的。好好学习天天向上吧。标准结尾，我也不会写别的啊，光这些我就写了半个小时啊😢😢😢。]]></content>
       <tags>
-        <tag>a</tag>
-        <tag>b</tag>
-        <tag>c</tag>
+        <tag>README</tag>
       </tags>
   </entry>
   <entry>
-    <title>Hello World4</title>
-    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(2)/</url>
-    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
+    <title>周报week1</title>
+    <url>/2026/10/25/%E5%91%A8%E6%8A%A5week1/</url>
+    <content><![CDATA[这周学了什么：
+感觉二进制和逆向还是太困难了，一直在学基础，所以做的题少，复习了C语言，学了一些汇编和计算机基础。感觉要彻底搞明白这些还要起码在学一周基础，下周的重心可能不在做题上，而是基础学习与复习。
+下面的是一天时间内写的，不全，以后每天记录可能会更详细。
+这周学的和复习的：
+计算机体系结构：冯诺依曼结构，CPU从内存中取指令；每个内存单元有一个地址，地址为从0开始编号的整数，CPU通过地址找到相应的内存单元来读取其中的指令，一个地址所对应的内存单元只能存一字节；CPU中有寄存器，CPU通过eip寄存器来取地址，然后获取和执行指令；小端序字节是低地址保存整数的低位，如x86，大段序字节相反低地址保存整数的高位；MMU支持虚拟内存管理，直接传到内存的内存地址叫做物理地址，CPU到MMU的地址称为虚拟地址，MMU可以将VA映射为PA，以页为单位；储存器分为寄存器，缓存，内存，硬盘等，寄存器和缓存位于CPU中，前三种数据断电丢失，寄存器可以直接有指令控制，缓存机制可以便于CPU读取指令提升计算机性能。
+数制：数制是按进位原则计数的法则。常用N进制从0开始逢n进一，0到n被称为数码，在不同位置位权不同。n进制转为十进制按位权展开计算即可；十进制转n进制要整数小数部分分别转换，整数除n倒取余，小数乘n顺取整；二进制0+0=0，1+0=1，1+1高位进一。逻辑与为并且，逻辑或为或者，逻辑非取反；数值类型分为定点数和浮点数；定点数分为定点小数和定点整数，约定小数点左小右整，定点整数分为有符号整数和无符号整数。有符号整数有原码反码和补码三种表示形式，0的补码唯一。所有顶点小数都是纯小数，小于1。浮点数有阶码和位数两部分，有公式计算。
+编码：西文字符有ASCII码和EBCDIC表示，汉字编码有GB 2312-80编码和GBK，USC/Unicode汉字编码等等。汉字输入依靠输入编码，输出可以用点阵表示和矢量表示。
+C语言（复习）：C是编译型语言，编译器和连接器可以把C代码转换为C程序。C程序由一个或多个函数构成，必须有一个main函数且一定从main函数开始执行；include是预处理指令，可以引用头文件；//和/**/是注释，在程序运行时会被忽略；可以用关键字声明变量，变量命名要有效；c语言可以用=进行赋值，printf函数能打印，return语句会返回函数的值。C的数据类型有整数类型和浮点类型，整型分为有符号和无符号；char为整型，_bool是能表示0和1的无符号整型；float和double为浮点型；0前缀表示八进制，0x和0X前缀表示十六进制，l后缀表示long类型，ll后缀表示long long类型；用单引号可以表示一个字符常量；某些函数使用转换说明来识别值，转换说明通常为%加转换字符；sizeof运算符可以给出字节大小。字符串是多个字符序列，以空字符结尾；数组是一系列同类型元素的集合，声明是要确保声明了足够多的空间来储存字符串和空字符；字符串常量用双引号括起来表示；scanf函数可以输入字符；#define预处理可以创建常量，const可以创建不能修改的变量；strlen函数可以给出字符串长度。C中有赋值运算符和算术运算符等，运算需要一个或多个对象。表达式由运算符和对象组成，每个运算符具有优先级，先进行优先级高的运算，相等的由结合律运算，花括号括起来的语句可以成为一个块；C中有类型转换，有类型升级或降级，降级可能丢失数据。
+汇编：汇编是用助记符来表示机器码操作的语言，使用汇编器可以将助记符翻译为机器码。先学的x86intel汇编。暂时只学了助记符和基本格式，助记符+目标操作数+源操作数；mov可以复制源操作数到目标操作数，lea是取地址到目标操作数，add是加法，sub是减法，mul是乘法，div是除法，cmp是比较，实质是减法但不保存结果，影响标志位。and按位与，or按位或，not按位取反，xor按位异或。push为压栈，pop为出栈。标志寄存器中有zf，pf，of，sf，cf，执行指令后结果为0zf=1，反之zf=1。
+就学了这些好像。
+下周可能要学这些 ：Python基础，汇编，哈希与加密，可执行文件和一些计算机基础
+下周可能要复习这些：C语言，Linux、Shell 与文件操作，网络，HTTP ，JavaScript，HTML和一些计算机基础
+这周做了什么什么题：
+参加了极客2026，不用AI拼尽全力才做出了两个杂项。得努力学习和复习了。
+其他的题
+easyre wp
+确实easy，在ida中打开，找到mean函数，flag就在里面。
 
-More info: Writing
-Run server$ hexo server
+不一样的flag wp
+ida打开，找到主函数，能看出来是个小游戏
 
-More info: Server
-Generate static files$ hexo generate
+查看这行，可以看出这是一个5*5的迷宫得从*不碰一走到#
 
-More info: Generating
-Deploy to remote sites$ hexo deploy
+列出迷宫
 
-More info: Deployment
-]]></content>
-      <categories>
-        <category>学习笔记1</category>
-      </categories>
+得到应走的格式为下下下右右上上右右下下下，也就是222441144222
+
+得到flag为flag{222441144222}。
+第一次写，写的很烂，评价的时候温柔点😢]]></content>
       <tags>
-        <tag>e</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World3</title>
-    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC%20(3)/</url>
-    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
-
-More info: Writing
-Run server$ hexo server
-
-More info: Server
-Generate static files$ hexo generate
-
-More info: Generating
-Deploy to remote sites$ hexo deploy
-
-More info: Deployment
-]]></content>
-      <categories>
-        <category>学习笔记0</category>
-        <category>笔记1</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Hello World0</title>
-    <url>/2026/10/16/hello-world/</url>
-    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
-
-More info: Writing
-Run server$ hexo server
-
-More info: Server
-Generate static files$ hexo generate
-
-More info: Generating
-Deploy to remote sites$ hexo deploy
-
-More info: Deployment
-]]></content>
-      <categories>
-        <category>学习笔记0</category>
-      </categories>
-      <tags>
-        <tag>a</tag>
-        <tag>b</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World1</title>
-    <url>/2026/10/17/hello-world%20-%20%E5%89%AF%E6%9C%AC/</url>
-    <content><![CDATA[Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick StartCreate a new post$ hexo new &quot;My New Post&quot;
-
-More info: Writing
-Run server$ hexo server
-
-More info: Server
-Generate static files$ hexo generate
-
-More info: Generating
-Deploy to remote sites$ hexo deploy
-
-More info: Deployment
-]]></content>
-      <categories>
-        <category>学习笔记0</category>
-        <category>笔记0</category>
-      </categories>
-      <tags>
-        <tag>b</tag>
-        <tag>c</tag>
+        <tag>周报</tag>
       </tags>
   </entry>
 </search>
