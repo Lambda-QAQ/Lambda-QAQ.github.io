@@ -1,0 +1,425 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>周报week2 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第二周了吗🤔">
+<meta property="og:type" content="article">
+<meta property="og:title" content="周报week2">
+<meta property="og:url" content="https://lambda.monster/2026/11/01/%E5%91%A8%E6%8A%A5week2/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="第二周了吗🤔">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-11-01T06:08:56.862Z">
+<meta property="article:modified_time" content="2026-11-01T06:23:11.270Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="周报">
+<meta property="article:tag" content="基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "周报week2",
+  "url": "https://lambda.monster/2026/11/01/%E5%91%A8%E6%8A%A5week2/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-11-01T06:08:56.862Z",
+  "dateModified": "2026-11-01T06:23:11.270Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/11/01/%E5%91%A8%E6%8A%A5week2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '周报week2',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">周报week2</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">周报week2</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-11-01T06:08:56.862Z" title="发表于 2026-11-01 14:08:56">2026-11-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-11-01T06:23:11.270Z" title="更新于 2026-11-01 14:23:11">2026-11-01</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>学了和复习了什么</h1>
+<p>为什么新学的和复习的不分开了？因为我发现复习的时候还会有很多一知半解甚至不知道，干脆重学一遍更好，还能加深记忆。</p>
+<p>这些都是简单了解加使用的基础，只做到了理解和够用，没有深入展开研究，再用到时会深入。下面是总结：</p>
+<p><b>Linux与shell：</b><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9ALinux%E4%B8%8Eshell/">ctf基础：Linux与shell</a></p>
+<p><i>运行环境：</i></p>
+<p>WSL是Windows里的Linux环境，ssh可以连接其他机器；命令在哪台机器执行，一般就操作哪台机器的文件，连接远程机器后输入的命令通常在远程执行；</p>
+<p><i>目录与路径：</i></p>
+<p>pwd看自己在哪个目录，cd切换目录，.是当前目录，..是上级目录，~是用户主目录；相对路径从当前目录开始找，绝对路径从根目录开始找；</p>
+<p><i>虚拟环境与依赖：</i></p>
+<p>虚拟环境给不同项目分开管理Python和安装的包，激活后优先使用这个环境里的命令，但不会改变当前目录；pip安装Python包，apt安装Linux工具，requirements.txt记录项目需要哪些包；</p>
+<p><i>文件操作与搜索：</i></p>
+<p>ls看文件列表，mkdir建目录，cp复制，mv移动或改名，cat输出文件内容，diff比较文件，less翻页阅读，find找文件，grep找文本；名字以.开头的通常是隐藏文件，隐藏不等于加密；</p>
+<p><i>输入与输出：</i></p>
+<p>程序可以接收输入，也可以输出结果和报错；常用编号0是标准输入，1是标准输出，2是标准错误，这些编号叫文件描述符，可以指向文件、终端、管道等；</p>
+<p><i>管道与重定向：</i></p>
+<p>&gt;把正常输出写入文件并覆盖旧内容，&gt;&gt;追加到末尾，2&gt;保存报错，&lt;从文件读取输入；|把前一条命令的正常输出交给后一条，不会默认把报错也传过去；</p>
+<p><i>重定向顺序：</i></p>
+<p>重定向从左往右处理，&gt;文件 2&gt;&amp;1先把正常输出接到文件，再把报错接到同一位置，两种输出都进文件；2&gt;&amp;1 &gt;文件先把报错接到原来的正常输出位置，再单独把正常输出改到文件；2复制的是1当时的去向，不会一直跟着1变；</p>
+<p><i>文件与目录权限：</i></p>
+<p>r是读，w是写，x是执行，u是所有者；对目录来说，r允许列出里面的名字，x允许进入和按名字访问，w配合x允许增删目录里的文件；文件只读也可能被删除，因为删除主要看所在目录的权限；</p>
+<p><i>执行脚本：</i></p>
+<p>chmod u+x给所有者增加执行权限，u-x移除；./脚本是直接执行，bash 脚本是让bash读取并运行，后者通常不要求脚本自己有执行权限，但仍要能读取；</p>
+<p><i>文件类型与压缩：</i></p>
+<p>file判断文件像什么类型，改后缀不会改变内容；打包是把多个文件收在一个包里，压缩是利用数据规律减少体积；tar通常只打包，tar.gz先打包再压缩，zip可以打包和压缩，unzip解压；小文件或已经压缩过的文件，压缩后也可能更大；</p>
+<p><i>网络工具：</i></p>
+<p>curl请求网页或下载资源，ssh登录远程机器并进行加密通信，nc通用收发数据；能连上端口不代表能执行命令，还要使用对方理解的协议；</p>
+<p><i>进程与后台任务：</i></p>
+<p>程序运行起来的一次实例叫进程，同一个程序可以开多个进程，PID是进程编号；&amp;让任务在后台运行，ps、pgrep查看进程；后台运行不代表关闭终端后一定还能继续；</p>
+<p><i>退出码与条件执行：</i></p>
+<p>退出码是命令结束后报告的状态，0通常表示成功，非0要看具体命令；$?查看刚结束命令的退出码，要紧接着看；&amp;&amp;是前面成功才执行后面，||是前面非0才执行后面，;是不管前面结果如何都继续；</p>
+<p><i>信号与终止：</i></p>
+<p>信号是给进程的通知，不是退出码；Ctrl+C通常发送中断信号SIGINT，kill默认发送SIGTERM请求程序结束，SIGKILL则直接强制结束，程序不能拒绝，也没有正常收尾的机会；</p>
+<p><i>段错误与越界：</i></p>
+<p>程序访问不允许访问的内存时，可能出现段错误；越界不一定马上崩溃，没有崩溃不代表没有问题，出现段错误也不代表漏洞一定能利用；</p>
+<p><b>数制，文本，编码，加密：</b><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/">ctf基础：数制，文本，编码，加密</a></p></p>
+<p><i>位与进制：</i></p>
+<p>bit是位，只能是0或1，1byte通常是8bit；n位有2ⁿ种组合，无符号整数范围为0到2ⁿ-1，如8位是0到255，共256种值；4个二进制位可以写成1个十六进制位；</p>
+<p><i>整数与文本：</i></p>
+<p>整数12是一个数，文本"12"是字符1和字符2，不是一回事；文本存进文件时要按编码变成字节，"12"的UTF-8字节是31 32，这里用十六进制显示；</p>
+<p><i>ASCII、Unicode与UTF-8：</i></p>
+<p>ASCII给一小组字符规定编码值，Unicode给字符分配编号，叫码点，UTF-8再把码点变成实际保存的字节；字符数量不等于字节数量，不是所有字符都占1字节，也不是所有汉字都占3字节；</p>
+<p><i>Hex：</i></p>
+<p>Hex就是十六进制表示，一个字节用两个十六进制字符写出来；字节0x31和文本"31"不同，前者是1字节，后者是两个字符，把文本"31"按Hex解码才得到字节0x31；</p>
+<p><i>Base32与Base64：</i></p>
+<p>它们把字节里的二进制位分组，再换成字符；Base32每5位换一个字符，Base64每6位换一个字符，所以Base64通常3字节变4字符；最后一组不够时，标准格式可能用=补齐，=只是填充标记；</p>
+<p><i>Base100：</i></p>
+<p>可以设计使用100种符号的编码，比如用emoji表示，但只说Base100还不知道具体怎么编，要看符号表、分组和补齐规则；</p>
+<p><i>URL百分号编码：</i></p>
+<p>把字节写成%加两位十六进制数，如空格是%20，百分号是%25；%2520解码一次是%20，再解码一次才是空格；表单里+常表示空格，%2B表示加号，但这个规则不能套到所有地方；</p>
+<p><i>HTML字符引用：</i></p>
+<p>HTML里可以用特殊写法表示字符，如&amp;lt;表示&lt;，&amp;#49;和&amp;#x31;都表示字符1，前者用十进制码点，后者用十六进制码点；</p>
+<p><i>多层编码：</i></p>
+<p>每一步都要分清现在是文本还是字节，用了什么规则；先Hex再Base64，恢复时就先解Base64再解Hex，不能看到像编码就反复乱解；</p>
+<p><i>大小端：</i></p>
+<p>一个整数占多个字节时，需要规定这些字节按什么顺序放；0x12345678大端放成12 34 56 78，小端放成78 56 34 12，只换字节顺序，不把每个字节内部也倒过来；</p>
+<p><i>按位运算：</i></p>
+<p>把两个数写成二进制后逐位计算；&amp;是两个都为1才得1，|是有一个1就得1，^是不同得1、相同得0，~是0和1互换；异或不进位，同一个数异或两次相同的值，可以恢复原数；</p>
+<p><i>循环异或：</i></p>
+<p>密钥不够长就重复使用，与数据逐字节异或；恢复时用相同密钥、从相同位置开始再异或一次；简单重复密钥异或不能当作可靠的现代加密；</p>
+<p><i>移位与掩码：</i></p>
+<p>左移是把二进制位往左挪，非负整数不丢位时，左移1位相当于乘2；右移可能丢掉低位，不一定能恢复；x &amp; 0xFF只保留低8位，其他位清零，被清掉的信息通常不能只凭结果找回来；</p>
+<p><i>多步还原：</i></p>
+<p>正向先异或、再加5，逆向就先减5、再异或；有位数限制时还要按同样规则保留对应位数，恢复后再按正向算一遍检查；</p>
+<p><i>逻辑运算：</i></p>
+<p>按位运算处理每个二进制位，逻辑运算判断条件；Python的and左边为假就不再算右边，or左边为真就不再算右边，这叫短路，&amp;没有这种保护；</p>
+<p><i>字符倒序与字节倒序：</i></p>
+<p>"中A"按字符倒序是"A中"，但“中”在UTF-8里占多个字节，直接把所有字节倒过来，可能让文字无法正常解码；</p>
+<p><i>补码：</i></p>
+<p>同样的二进制位，按不同规则解释，数值可能不同；8位11111111按无符号看是255，按有符号补码看是-1；8位补码范围是-128到127，求-5的补码可以把5写成8位、取反、再加1；</p>
+<p><i>扩展与溢出：</i></p>
+<p>增加位数时，无符号数通常在高位补0，有符号补码数复制原来的最高位；计算结果超出类型范围叫溢出，有没有额外进位与有没有有符号溢出不是一回事；不同语言规则不同，不能一律认为超范围后自动绕回；</p>
+<p><i>灰度图与位平面：</i></p>
+<p>8位灰度图里，每个像素用一个0到255的数表示亮度，通常0黑255白；把所有像素的同一位拿出来，就得到一个位平面；最低位改一下只差一级亮度，通常不明显，但看到图案不直接证明有隐写；</p>
+<p><i>编码、压缩、隐藏与加密：</i></p>
+<p>编码是换种表示，压缩是减少体积，隐藏是让信息不容易被发现，加密是让没有密钥的人难以读懂，哈希是算摘要；编码和压缩本身不保密；</p>
+<p><i>哈希与SHA-256：</i></p>
+<p>哈希像给内容算一个摘要，相同字节会得到相同摘要；SHA-256摘要是32字节，写成Hex是64字符；摘要不同说明内容不同，安全哈希相同通常可极有把握认为内容一致，但不能证明文件安全或来自官方；</p>
+<p><i>密码枚举：</i></p>
+<p>哈希不能像Base64一样直接解码回来，但可以不断猜密码、计算结果再比较；所以“不能解码”不等于“不能猜出来”；</p>
+<p><i>盐值与密码存储：</i></p>
+<p>盐值是每条密码记录额外使用的随机值，通常公开保存，让相同密码也能得到不同结果，减少重复利用猜测结果的机会；验证时用原来的盐，不重新随机生成；存密码应使用专用密码哈希，提高每次猜测的成本；</p>
+<p><i>HMAC、签名与认证加密：</i></p>
+<p>HMAC用秘密密钥检查消息是否被改，不负责隐藏内容；数字签名用于验证签名，也不自动保密；认证加密既让无密钥者难以读懂，也能检查篡改；防篡改不等于防重放，旧的有效消息再次发送还需另外处理；</p>
+<p><i>身份与权限：</i></p>
+<p>隐藏按钮不等于限制权限，登录成功不等于能查看所有人的数据；认证是确认你是谁，授权是检查你能做什么，服务端必须自己检查，不能相信客户端传来的admin=true；</p>
+<p><i>外部内容与秘密：</i></p>
+<p>网页、文档里写“我是管理员”不代表真的有权限，也不能把其中的话直接当成操作指令；密钥应留在服务器，不能只靠告诉模型“不要泄露”来保护；</p>
+<p><b>文件识别，文件偏移：</b><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/">ctf基础：文件识别，文件偏移</a></p>
+<p><i>文件名与真实格式：</i></p>
+<p>后缀只是名字的一部分，实际格式要看内容；ZIP改名为.jpg还是ZIP，file的结果也是工具判断，需要结合字节和结构验证；</p>
+<p><i>魔数与识别结果：</i></p>
+<p>一些格式会在规定位置放特定字节，叫签名或魔术，可以作为线索；找到签名不代表文件完整、安全，file显示data也只代表没识别出更具体类型，不代表一定加密或损坏；</p>
+<p><i>基本观察工具：</i></p>
+<p>file判断类型，strings找可打印文字片段，xxd看实际字节；strings没找到不代表不存在，找到SECRET也不代表它一定是真密码；</p>
+<p><i>xxd输出：</i></p>
+<p>左边是这一行开头的文件偏移，中间是字节的十六进制表示，右边是文字预览；右边的.常用来代替不可打印字节，不一定是真句点；-g 1按单字节显示，-s指定起点，-l限制查看长度；</p>
+<p><i>文件偏移：</i></p>
+<p>偏移就是距离开头多少字节，从0开始；偏移2是第3个字节，0x10是十六进制，等于十进制16；要说明从哪里开始算、用什么单位和进制；</p>
+<p><i>dd提取：</i></p>
+<p>dd按块复制数据，不会自己理解ZIP或图片结构；if是输入，of是输出，bs是每块大小，skip是跳过多少输入块，count是最多复制多少块；bs=1时按字节算，不写count就复制到输入结束；</p>
+<p><i>提取后的偏移：</i></p>
+<p>新文件从提取位置重新开始计数，新偏移=原偏移-提取起点；例如从偏移12开始提取，原偏移20的字节在新文件里是偏移8，不是所有字节都变成偏移0；</p>
+<p><i>提取结果检查：</i></p>
+<p>file看类型，xxd看字节，wc -c看大小；命令执行结束不等于提取正确，起点、长度和内容都要检查；</p>
+<p><i>指定字节修改：</i></p>
+<p>先保留原件，在副本上改；dd的skip跳过输入，seek定位输出，修改已有文件时conv=notrunc可避免截断其他内容；改对目标位置后，还要比较整个文件，确认没有多改或改变长度；</p>
+<p><i>哈希与差异比较：</i></p>
+<p>sha256sum检查内容是否变化，不看普通文件名，也不告诉你改在何处；cmp -l列出不同位置，本环境里位置从1开始数，字节值用八进制显示，要与xxd的偏移和十六进制区分；</p>
+<p><i>内嵌ZIP提取：</i></p>
+<p>文件前面多了一段前缀，可以从ZIP真正开始的位置提取；但dd不会自动识别ZIP结尾，没写count就会把后面的内容也复制走；unzip -t通过不代表与原ZIP完全相同，要再比较字节或哈希；</p>
+<p><i>ELF的头、节与段：</i></p>
+<p>ELF是Linux常见程序文件格式；ELF头记录位数、端序、架构和入口等信息，节按代码、数据等用途分类，段主要描述程序怎样加载进内存，一个段可以包含多个节；readelf -h看头，-l看程序头表；</p>
+<p><i>LOAD字段：</i></p>
+<p>Offset是这段内容在文件里的起点，VirtAddr是ELF记录的虚拟地址，FileSiz是文件里有多少字节，MemSiz是加载后需要多少内存；内存需要得更多时，多出的部分补0，不一定在文件里有对应字节；</p>
+<p><i>文件偏移与内存地址：</i></p>
+<p>文件偏移说明字节在文件哪里，虚拟地址说明它在进程地址空间哪里，两者不是同一种位置；入口地址也不是文件偏移，通常还不是main；</p>
+<p><i>ELF地址换算：</i></p>
+<p>先确认目标在哪个段，段内偏移=文件偏移-段的文件起点，再用段的虚拟地址加段内偏移；本次运行的地址还可能受加载位置影响，不能对整个文件随便套同一个公式；</p>
+<p><i>进程内存映射：</i></p>
+<p>/proc/PID/maps查看进程把哪些内容放到了哪些虚拟地址；在适用的文件映射范围内，目标地址=映射起点+(目标文件偏移-映射起点对应的文件偏移)；位置能对应，不代表内存里的内容一定没被修改；</p>
+<p><i>扇区与分区偏移：</i></p>
+<p>LBA是逻辑扇区编号，先确认每扇区多少字节，再算整盘偏移=LBA×扇区大小+扇区内偏移；分区内的位置要加分区起点，但文件可能分散存放，不能直接用分区起点加文件内部偏移；</p>
+<p><i>EVM存储槽：</i></p>
+<p>每个槽能存32字节，槽编号像查找数据的键，不是文件里的字节位置；多个小变量可能放同一个槽，找变量还要知道槽内位置和长度，不能直接把槽编号乘32后用dd读取；</p>
+<p><b>网络与HTTP，结构化数据：</b><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E7%BD%91%E7%BB%9CHTTP%EF%BC%8C%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE/">ctf基础：网络与HTTP，结构化数据</a></p>
+<p><i>客户端与服务端：</i></p>
+<p>客户端发起请求，如浏览器、curl，服务端监听并返回结果，两者可以在同一台机器；IP用于找到通信地址，端口区分服务入口，协议规定双方怎么交流；</p>
+<p><i>回环地址、DNS与TCP：</i></p>
+<p>127.0.0.1和::1是回环地址，指向当前网络环境自身，localhost是通常解析到回环地址的主机名；DNS把名称解析成地址，TCP提供双向、有序的字节传输，连上不代表请求的资源一定存在；</p>
+<p><i>URL组成：</i></p>
+<p>URL里有协议、主机、端口、路径等，?后是查询参数，参数常用&amp;分隔，#后是页面片段，通常不会随HTTP请求目标发给服务端；网址路径不一定就是磁盘文件路径；</p>
+<p><i>HTTP请求与响应：</i></p>
+<p>HTTP/1.x请求一般是请求行、请求头、空行和可选正文，响应一般是状态行、响应头、空行和正文；头里放说明信息，正文里放实际数据；</p>
+<p><i>正文长度：</i></p>
+<p>Content-Length表示正文多少字节，不包括响应头，也不是页面上看到多少个字；中文可能一个字占多个字节，HTML标签也属于正文；</p>
+<p><i>状态码与成功判断：</i></p>
+<p>200通常表示成功，404表示服务端收到请求但没找到资源，和连不上服务不同；curl退出0、HTTP返回200、文件成功保存都不能单独证明内容正确，下载的ZIP也可能实际是登录页面；</p>
+<p><i>GET与POST：</i></p>
+<p>GET常用来获取资源，POST常用来提交数据；POST也能带查询参数，而且不会自动加密，传输加密通常靠HTTPS；</p>
+<p><i>表单与JSON：</i></p>
+<p>表单常写成name=Li&amp;age=5，JSON则用对象、数组等结构保存数据；JSON键和字符串用双引号，数字5和字符串"5"不同；格式合法不代表内容合理，还要检查字段和值；</p>
+<p><i>类型声明：</i></p>
+<p>Content-Type说明发送方声称正文是什么类型，不会自动把错误内容变正确；写application/json，正文也仍可能不是合法JSON；</p>
+<p><i>Cookie与会话：</i></p>
+<p>服务端通过Set-Cookie让浏览器保存Cookie，浏览器后续按规则带上；常见登录方式是Cookie里放会话标识，服务端据此查登录状态，Cookie也可以用来保存偏好；</p>
+<p><i>Cookie属性：</i></p>
+<p>HttpOnly限制常规页面脚本读取，Secure通常要求安全连接发送，SameSite影响跨站请求是否携带；这些属性各有作用，不等于把Cookie加密，Path也不是可靠的权限边界；</p>
+<p><i>令牌与权限：</i></p>
+<p>Authorization可以携带令牌，但带了不等于有效，服务端还要检查是否过期、是否有对应权限；知道你是谁，不代表你能访问所有资源；</p>
+<p><i>重定向过程：</i></p>
+<p>服务端返回重定向状态和Location，客户端再去请求另一个地址；第一份响应没有正文也能跳转，最终页面可能来自第二份响应，两次请求也不一定新建两条TCP连接；</p>
+<p><i>重定向方法与跟随：</i></p>
+<p>303常让客户端改用GET，307/308保持原方法和正文，301/302在常见客户端里可能把POST改成GET；浏览器通常自动跟随，curl默认不跟随，加-L才跟随；</p>
+<p><i>curl常用选项：</i></p>
+<p>-i显示响应头，-D把响应头存文件，-o把正文存文件，-H设置请求头，-sS隐藏进度但保留错误提示；-f让HTTP错误通常也算命令失败，本次404不加-f退出0，加-f退出22；</p>
+<p><i>浏览器网络面板：</i></p>
+<p>看请求时要核对路径、时间、顺序和当前选中记录，不能随便把两条记录当成同一次跳转；正文大小和已传输大小可能不是一回事；复制为curl时可能连Cookie、令牌一起复制出去；</p>
+<p><i>请求头的判断边界：</i></p>
+<p>Accept是客户端想要什么类型，User-Agent等是客户端自报信息，不能直接当身份凭据；请求写keep-alive不代表服务端一定保持连接，声明支持压缩也不代表本次真的用了压缩；</p>
+<p><i>数据包、TCP流与HTTP消息：</i></p>
+<p>一个数据包不等于一条HTTP消息，消息可能分成多个包，同一连接也可能传多条消息；TCP只提供连续字节，不保留应用每次发送的分界，不能把抓到的内容随便拼成文件；</p>
+<p><i>抓包重组与文件导出：</i></p>
+<p>先根据连接、方向和顺序还原TCP字节流，再按HTTP规则找出消息与正文，必要时再解压；跟踪TCP流不等于已经正确导出文件；</p>
+<p><i>HTTPS与不同处理层次：</i></p>
+<p>字符编码决定字节怎样变文字，压缩减少体积，分块组织传输，TLS负责加密通信，它们不是同一回事；浏览器能看到HTTPS正文，不代表外部抓包也能直接看到；</p>
+<p><i>乱码与环境排错：</i></p>
+<p>HTTP成功不代表文字一定显示正确，UTF-8字节还要按UTF-8解释；新终端不会自动拥有旧终端的shell变量，变量为空不代表服务停止；用相对路径启动服务时，实际目录取决于启动位置；</p><hr>
+<p>下一周在学一下python，复习c和汇编，栈之类的可能半周最快就有信心专注Pwn和re这两个方向了<del>又能用基础水下个周报了😁</del></p><hr>
+<h1>做了什么题</h1>
+<p>极客做了三个新题，计算不好用了ai，复习了一下上周极客的两个题<del>拿这两个题水一下内容</del></p>
+<h2>ez_office wp</h2>
+<p>一个word文档，打开是</p>
+<img src="/img/极客2026wp/ez_office01.png" style="display:block; margin:0 auto;" alt="">
+<p>U1lDe3cwcmRfeG1MXw== 这段base64解密后是一半flagSYC{w0rd_xmL_</p>
+<p>藏了点东西的话再解压看看，解压后找到一张图片</p>
+<img src="/img/极客2026wp/ez_office02.png" style="display:block; margin:0 auto;" alt="">
+<p>图片名为SYC-blind.BMP，blind应该是盲水印的意思，一般是通过图片变化得到的，用ImageJ对图片进行FFT处理</p>
+<img src="/img/极客2026wp/ez_office03.png" style="display:block; margin:0 auto;" alt="">
+<p>得到后半段1s_rea11y_fun!}</p>
+<p>flag为SYC{w0rd_xmL_1s_rea11y_fun!}<p>
+<h2>！？原原？！wp</h2>
+<p>一个txt，打开后明显断句不正常，按题目提示应该使用了两种换行符，用Notepad++显示换行符，果然有两种换行符。</p>
+<img src="/img/极客2026wp/！？原原？！01.png" style="display:block; margin:0 auto;" alt="">
+<p>那应该就是二进制转化为ASCII码了。暂时不知道FL和CRFL哪个是0哪个是1，分别提取出来，再寻找大括号。按CRTL为0的话明显不对没有右大括号，以FL为0的话如下</p>
+<img src="/img/极客2026wp/！？原原？！02.png" style="display:block; margin:0 auto;" alt="">
+<p>将这段二进制转为ASCII码得到{y2an_lai_6i_9e_wan_OO}</p>
+<p>flag为SYC{y2an_lai_6i_9e_wan_OO}</p>
+<h2>动物世界 wp</h2>
+<p>一个txt文本文件，打开是好多小动物：
+🐪🐬🐪🐪🐪🐬🐪🐰🐪🐫🐪🐪🐪🐮🐫🐩🐪🐮🐪🐮🐪🐭🐪🐯🐪🐬🐪🐰🐪🐬🐫🐭🐪🐭🐫🐬🐪🐪🐪🐧🐪🐮🐪🐫🐪🐬🐫🐭🐪🐭🐪🐩🐪🐪🐪🐫🐪🐪🐪🐬🐪🐪🐪🐪🐪🐪🐪🐭🐪🐪🐪🐫🐪🐬🐫🐭🐪🐭🐪🐩🐪🐪🐪🐪🐪🐭🐪🐪🐪🐪🐪🐫🐪🐮🐪🐬🐪🐮🐪🐪🐪🐪🐪🐪🐪🐬🐫🐭🐪🐪🐪🐨🐪🐪🐪🐧🐪🐪🐪🐧🐪🐬🐫🐭🐪🐪🐪🐨🐪🐮🐪🐪🐪🐬🐫🐭🐪🐭🐪🐩🐪🐪🐪🐨🐪🐭🐪🐮🐪🐭🐪🐮🐪🐪🐪🐪🐪🐮🐪🐩🐪🐮🐫🐫🐁</p>
+<img src="/img/极客2026wp/动物世界01.png" style="display:block; margin:0 auto;" alt="">
+<p>既然全是emoji，那应该就是emoji专用的base100编码了，解码得：35333539343337423737363835393546364533303734354636323334333533333336333435463632333336333334373537333333354633313330333035463331373335463632333136373637333337323744</p>
+<p>用CyberChef的Magic烤一下，发现这是两次hex加密，解密得到flag</p><img src="/img/极客2026wp/动物世界02.png" style="display:block; margin:0 auto;" alt="">
+<p>SYC{whY_n0t_b45364_b3c4us3_100_1s_b1gg3r}</p>
+<h2>まとい りゅうこ wp</h2>
+<p>一个pyc文件，用pycdc反编译，结果如下，</p>
+<img src="/img/极客2026wp/まとい りゅうこ.png" style="display:block; margin:0 auto;" alt="">
+<p>分析一下这段python：
+定义的rol8函数将value数字二进制左移count位，&255保留八位。
+定义的check函数先将输入变量转为utf-8编码，然后用len检查长度；定义了一个函数内变量state=90，value与49 + i * 23保留后八位异或，再与后面算式结果和state相加保留后八位，再调用rol8函数左移i % 7 + 1位，一次是1-7循环，最后保留value并计算改变state的值，再用result数组将相邻两项对调，reverse（）倒序，将结果与TARGET组比较，那TARGET这一串应该是加密后的密文数组，好绕。
+main好像是负责输入的函数
+暂时只能看懂这些，还原的话...只能交给ai，解得还原后明文为
+SYC{1ife_fibe3_rebellio2}</p>
+<h2>rose wp</h2>
+<p>ELF文件，用ida打开，按shift+F12，找到the roses part and the exit opens和wrong，一个正确一个错误，查看他们的交叉引用，发现前置函数sub_40132F，</p>
+<img src="/img/极客2026wp/rose01.png" style="display:block; margin:0 auto;" alt="">
+<p>一堆垃圾指令，先jz  loc_401373再jz不跳jmp loc_40139B，再jz不跳jmp 0x4013C5，
+最后正确的跳转位置是loc_4013C5，</p>
+<img src="/img/极客2026wp/rose02.png" style="display:block; margin:0 auto;" alt="">
+<img src="/img/极客2026wp/rose03.png" style="display:block; margin:0 auto;" alt="">
+<p>在跳转发现实际再0x402040开始取数，取完后交给sub_401292处理</p>
+<img src="/img/极客2026wp/rose04.png" style="display:block; margin:0 auto;" alt="">
+<p>sub_401292内容如下</p>
+<img src="/img/极客2026wp/rose05.png" style="display:block; margin:0 auto;" alt="">
+<p>则0x402020为密钥，0x402040为密文，</p>
+<img src="/img/极客2026wp/rose06.png" style="display:block; margin:0 auto;" alt=""><p>则应该为循环位移异或，我算不明白，ai代算
+解得flag为
+syc{r3turn_t0_m1_f1n3_me_h4l5m41l1lL1!}</p><hr>
+
+<p><i><b>题外话：</b></i>最近了解到港大有一个开源的agent叫DeepTutor，用提问的方法学习，用下来来还不错，起码知识进脑了，<del>最重要的是这个能一键导出学习笔记</del>可能最近这两周学基础，和以后学概念之类的理论基础就会用这个了↓↓↓<p>
+<img src="/img/DT.png" style="display:block; margin:0 auto;" alt=""></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/11/01/%E5%91%A8%E6%8A%A5week2/">https://lambda.monster/2026/11/01/%E5%91%A8%E6%8A%A5week2/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80/">基础</a><a class="post-meta__tags" href="/tags/%E5%91%A8%E6%8A%A5/">周报</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">学了和复习了什么</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">做了什么题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">ez_office wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">！？原原？！wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.3.</span> <span class="toc-text">动物世界 wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.4.</span> <span class="toc-text">まとい りゅうこ wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.5.</span> <span class="toc-text">rose wp</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/01/%E5%91%A8%E6%8A%A5week2/" title="周报week2">周报week2</a><time datetime="2026-11-01T06:08:56.862Z" title="发表于 2026-11-01 14:08:56">2026-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/" title="ctf基础：数制，文本，编码，加密">ctf基础：数制，文本，编码，加密</a><time datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/" title="ctf基础：文件识别，文件偏移">ctf基础：文件识别，文件偏移</a><time datetime="2026-10-31T05:24:46.711Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E7%BD%91%E7%BB%9CHTTP%EF%BC%8C%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE/" title="ctf基础：网络HTTP，结构化数据">ctf基础：网络HTTP，结构化数据</a><time datetime="2026-10-31T05:24:46.706Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9ALinux%E4%B8%8Eshell/" title="ctf基础：Linux与shell">ctf基础：Linux与shell</a><time datetime="2026-10-31T05:24:46.701Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
