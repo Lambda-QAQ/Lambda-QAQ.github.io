@@ -1,0 +1,879 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ctf基础：数制，文本，编码，加密 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="数制，文本，编码，加密基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctf基础：数制，文本，编码，加密">
+<meta property="og:url" content="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="数制，文本，编码，加密基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-31T05:24:46.715Z">
+<meta property="article:modified_time" content="2026-10-31T09:55:03.885Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ctf基础：数制，文本，编码，加密",
+  "url": "https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-10-31T05:24:46.715Z",
+  "dateModified": "2026-10-31T09:55:03.885Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ctf基础：数制，文本，编码，加密',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">ctf基础：数制，文本，编码，加密</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ctf基础：数制，文本，编码，加密</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-31T09:55:03.885Z" title="更新于 2026-10-31 17:55:03">2026-10-31</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div lang="zh-CN" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Microsoft YaHei,sans-serif;line-height:1.6;color:inherit;overflow-wrap:break-word;">
+
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">学习笔记：数据表示、整数行为与秘密保护</h1>
+
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">一、数制与数据表示</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. bit、byte 与位宽</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">bit（位）：只能取零或一。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">通用练习中，一个 byte（字节）按八位计算。C 的字节有专门定义，留待后续学习。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">位宽表示使用多少位保存数据。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px"><span>n</span> 位无符号整数范围：</p>
+<div>0～2<sup>n</sup>-1</div>
+<p style="margin:0 0 16px">八位无符号整数范围是 <span>0～255</span>，共 <span>256</span> 种值。最大值与数值个数不同。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 二进制与十六进制</h2>
+<p style="margin:0 0 16px">二进制从右向左的位权为：</p>
+<div>1,2,4,8,16,32,64,128,…</div>
+<p style="margin:0 0 16px">例如：</p>
+<div>(1010)<sub>2</sub>=8+2=10</div>
+<p style="margin:0 0 16px">十六进制使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0～9、A～F</code>，其中 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">A～F</code> 对应十进制的 <span>10～15</span>。</p>
+<p style="margin:0 0 16px">四个二进制位对应一个十六进制位：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+二进制：  0010 1111
+
+<p>十六进制：   2    F</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0b1010</code>、十进制的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">10</code> 和 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x0A</code> 可以表示同一个数。前缀是进制标记。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">二、整数、字符、文本与字节</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 整数与字符不同</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">对象</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">对应表示</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">整数 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">1</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">数量一</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">存为单个无符号字节时是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x01</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">字符 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">'1'</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文字符号</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ASCII、UTF-8 字节是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x31</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;12&quot;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">两个字符</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">UTF-8 字节是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">31 32</code></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;12&quot;</code> 不等于整数十二。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. ASCII、Unicode、UTF-8</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">名称</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ASCII</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">为一小组字符规定编码值</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">Unicode</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">为字符分配码点</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">UTF-8</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">把 Unicode 码点编码成字节</td>
+</tr>
+</tbody>
+</table>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+字符：         中
+
+<p>Unicode码点：  U+4E2D</p>
+<p>UTF-8字节：    E4 B8 AD</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">码点不是 UTF-8 字节序列。“中”不是直接存成 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">4E 2D</code>。</p>
+<p style="margin:0 0 16px">ASCII 范围内的字符，在 UTF-8 中仍使用相同的单字节表示。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 字符数不等于字节数</h2>
+<p style="margin:0 0 16px">文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;A中A&quot;</code> 有三个字符，UTF-8 编码后占 <span>1+3+1=5</span> 字节。</p>
+<p style="margin:0 0 16px">不是所有字符都占一个字节，也不是所有汉字都恰好占三个字节。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">三、编码与多层转换</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. Hex</h2>
+<p style="margin:0 0 16px">一个字节用两个十六进制字符表示：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+原文本：    &quot;12&quot;
+
+<p>UTF-8字节： 31 32</p>
+<p>Hex文本：   &quot;3132&quot;</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">必须区分：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">字节 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x31</code>：一个字节。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;31&quot;</code>：两个字符，UTF-8 字节为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">33 31</code>。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">Hex 解码文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;31&quot;</code>，才会得到字节 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x31</code>。</p>
+</li>
+</ul>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. Base64 与 Base32</h2>
+<p style="margin:0 0 16px">“Base”表示基数；数字表示数据符号的数量。</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">编码</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">数据符号数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">每个数据字符承载的位数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">完整分组</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">Hex／Base16</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">16</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">4</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">1 字节 → 2 字符</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">Base32</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">32</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">5</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">5 字节 → 8 字符</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">Base64</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">64</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">6</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">3 字节 → 4 字符</td>
+</tr>
+</tbody>
+</table>
+<div>2<sup>4</sup>=16,　2<sup>5</sup>=32,　2<sup>6</sup>=64</div>
+<p style="margin:0 0 16px">基本方法：将输入字节展开成比特，分组，再查表换成字符。它们不是把整个输入当作普通大整数进行进制转换。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">标准 Base64</h3>
+<p style="margin:0 0 16px">数据符号是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">A～Z、a～z、0～9、+、/</code>。</p>
+<p style="margin:0 0 16px">标准带填充、不含换行的输出长度为：</p>
+<div>输出字符数=4⌈(输入字节数 / 3)⌉</div>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">输入字节数除以三的余数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">填充</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">0</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">无</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">1</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">==</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">2</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">=</code></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">=</code> 是填充标记，不属于那 64 个数据符号。有些协议允许省略填充。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">标准 Base32</h3>
+<p style="margin:0 0 16px">数据符号表：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
+
+<p></code></pre></p>
+<p style="margin:0 0 16px">每五位查表，不足五位时在右侧补零。标准带填充格式以八个输出字符为一组。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+&quot;A&quot; → 字节41 → 01000 | 00100 → IE======
+
+<p>&quot;B&quot; → 字节42 → 01000 | 01000 → II&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;</p>
+<p></code></pre></p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">Base100 的讨论</h3>
+<p style="margin:0 0 16px">可以设计使用 100 个不同符号的编码，但名称本身不能确定符号表、分组和末尾处理规则。</p>
+<div>2<sup>6</sup>&lt;100&lt;2<sup>7</sup></div>
+<p style="margin:0 0 16px">它不能像 Base64 那样，以固定整数个比特一对一映射到一个符号，并恰好用满全部符号。单符号的信息容量约为 <span>log<sub>2</sub> 100 ≈ 6.644</span> 位，这不是实际切出小数个位。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. URL 百分号编码</h2>
+<p style="margin:0 0 16px">把需要编码的字节写成 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">%</code> 加两位十六进制数字：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+空格 → %20
+
+<ul>
+<li>→ %2B</li>
+</ul>
+<p>%    → %25</p>
+<p>中   → %E4%B8%AD</p>
+<p></code></pre></p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+%2520 → 一次解码 → %20 → 再次解码 → 空格
+
+</code></pre>
+<p style="margin:0 0 16px">一次解码不自动继续解码新得到的内容。</p>
+<p style="margin:0 0 16px">表单编码中，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">+</code> 常表示空格；不能将此规则套到所有 URL 场景。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">4. HTML 字符引用</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">源码</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">对应字符</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;lt;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&lt;</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;gt;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&gt;</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;amp;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;#49;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">字符 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">1</code>，十进制码点</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;#x31;</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">字符 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">1</code>，十六进制码点</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">一次 HTML 解析将 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;amp;lt;</code> 变为字面文本 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;lt;</code>，不会在同一次解析中继续变成 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&lt;</code>。</p>
+<p style="margin:0 0 16px">数字字符引用针对 Unicode 码点，不是逐个 UTF-8 字节编码。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">四、大端与小端</h1>
+<p style="margin:0 0 16px">以 32 位整数 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x12345678</code> 为例，按地址从低到高：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">端序</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">字节排列</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">大端</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">12 34 56 78</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">小端</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">78 56 34 12</code></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">大端是最高有效字节在前，小端是最低有效字节在前。</p>
+<p style="margin:0 0 16px"><strong>改变的是字节之间的顺序，不是每个字节内部的数字。</strong></p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+整数0x00001234
+
+<p>大端：00 00 12 34</p>
+<p>小端：34 12 00 00</p>
+<p>文本&quot;1234&quot;的UTF-8字节：31 32 33 34</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">字节 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">34 12 00 00</code> 按 32 位无符号小端读回，是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x00001234</code>。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">五、位运算与逆向还原</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 基础规则</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">按位与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;</code>：都为一，结果才为一。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">按位或 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">|</code>：有一个一，结果就为一。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">异或 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">^</code>：不同为一，相同为零。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">取反 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">~</code>：零、一互换。</p>
+</li>
+</ul>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+1010 &amp; 0110 → 0010
+
+<p>1010 | 0110 → 1110</p>
+<p>1010 ^ 0110 → 1100</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">异或不是加法，不进位。Python 中 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">^</code> 不是乘方，乘方使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">**</code>。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 异或性质</h2>
+<div>x⊕ x=0,　 x⊕0=x</div>
+<div>(x⊕ k)⊕ k=x</div>
+<p style="margin:0 0 16px">异或满足交换律、结合律。纯异或表达式中，相同项可以成对消去，但不能任意跨过加法、移位或重排消去。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">循环密钥</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+数据：31 32 33 34 35
+
+<p>密钥：01 02 01 02 01</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">逐列异或。还原时使用同一密钥和相同对齐位置。简单单字节或重复密钥异或不应当作可靠的现代加密方案。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 移位</h2>
+<p style="margin:0 0 16px">非负整数在不截断时：</p>
+<div>x≪ n=x×2<sup>n</sup></div>
+<p style="margin:0 0 16px">右移可能丢失低位，因而不一定可逆。</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">逻辑右移：左边补零。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">算术右移：左边补原符号位。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">Python 普通整数右移相当于除以二的相应次幂后向下取整：</p>
+<div>x≫ n=⌊(x / 2<sup>n</sup>)⌋</div>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+11 &gt;&gt; 1 → 5
+
+<p>-5 &gt;&gt; 1 → -3</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">具体语言和类型的移位边界仍需后续学习。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">4. 掩码与截断</h2>
+<p style="margin:0 0 16px">保留低八位使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x &amp; 0xFF</code>。对本笔记中的非负整数，以及已讲的 Python 整数，该结果等于模 <span>256</span> 的非负余数。</p>
+<div>258 mod 256=2</div>
+<p style="margin:0 0 16px">掩码不一定可逆：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+0xA3 &amp; 0x0F → 0x03
+
+<p>0x53 &amp; 0x0F → 0x03</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">高四位被清除后，无法仅凭结果唯一恢复。</p>
+<p style="margin:0 0 16px">Python 中 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">~5</code> 为 <span>-6</span>；若只翻转低八位并按无符号数读取，可用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">(~5) &amp; 0xFF</code>，得到 <span>250</span>。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">5. 运算的正向与逆向</h2>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+正向：异或 → 加5并保留低8位
+
+<p>逆向：减5并保留低8位 → 异或</p>
+<p></code></pre></p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+正向：y = ((x ^ 0x03) + 5) &amp; 0xFF
+
+逆向：x = ((y - 5) &amp; 0xFF) ^ 0x03
+
+</code></pre>
+<p style="margin:0 0 16px">以上是单字节、模 <span>256</span> 的计算规则，不应不加分析地套用到任意 C 表达式。</p>
+<p style="margin:0 0 16px">括号决定正向计算顺序；逆向要倒序撤销。恢复后必须代回正向验证。</p>
+<p style="margin:0 0 16px">已完成实例：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+收到：02 09
+
+<p>减5并保留低8位：FD 04</p>
+<p>异或03：FE 07</p>
+<p>验证：FE ^ 03 → FD → 加5得102 → 保留低8位得02</p>
+<pre><code>  07 ^ 03 → 04 → 加5得09
+</code></pre>
+<p></code></pre></p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">6. 重排与异或</h2>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+正向：字节倒序 → 循环密钥异或
+
+<p>逆向：循环密钥异或 → 字节倒序</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">字符倒序与字节倒序不同。<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;中A&quot;</code> 字符倒序得到 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;A中&quot;</code>；直接倒序 UTF-8 字节可能破坏字符编码。</p>
+<p style="margin:0 0 16px">一般重排需要逆排列，不一定重复原操作就恢复。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">7. 按位运算与逻辑运算</h2>
+<p style="margin:0 0 16px">按位运算逐位处理整数；逻辑运算判断条件。</p>
+<p style="margin:0 0 16px">Python 的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">and</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">or</code> 有短路行为：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">and</code> 左侧为假，不再计算右侧。</p>
+</li>
+<li>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">or</code> 左侧为真，不再计算右侧。</p>
+</li>
+</ul>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+x为0时：
+
+<p>(x !&#x3D; 0) and (10 &#x2F; x &gt; 2) → 假，不执行除法</p>
+<p>(x &#x3D;&#x3D; 0) or  (10 &#x2F; x &gt; 2) → 真，不执行除法</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;</code> 不提供这种短路保护。Python 的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">and</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">or</code> 还可能返回操作数，不保证总返回布尔值。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">六、补码、扩展与整数边界</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 同一位模式，不同解释</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">八位模式</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">无符号</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">有符号补码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">11111111</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">255</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">−1</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">11111110</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">254</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">−2</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">11111011</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">251</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">−5</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">八位补码位权：</p>
+<div>-128,64,32,16,8,4,2,1</div>
+<p style="margin:0 0 16px">最高位为一时：</p>
+<div>有符号值=无符号值-256</div>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 求负数补码</h2>
+<p style="margin:0 0 16px">对本节范围内的负数：绝对值写成八位 → 逐位取反 → 加一。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+5：    00000101
+
+<p>取反： 11111010</p>
+<p>加一： 11111011 → -5的八位补码</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">最高位不是能独立贴上的负号。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 零扩展与符号扩展</h2>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+八位：    11111011
+
+<p>零扩展：  00000000 11111011 → 无符号251</p>
+<p>符号扩展：11111111 11111011 → 补码-5</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">保持无符号值通常使用零扩展；保持有符号补码值使用符号扩展。具体语言转换规则另学。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">4. 溢出与回绕</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">类型</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">八位范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">无符号</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><span>0～255</span></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">有符号补码</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><span>-128～127</span></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px"><span>120+10=130</span>：无符号未超范围，有符号溢出。保留位模式 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">10000010</code> 并按有符号补码解释，得到 <span>-126</span>。</p>
+<p style="margin:0 0 16px">有超出位宽的进位，不等于有符号溢出：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px"><span>5+(-1)</span> 可出现额外进位，但结果 <span>4</span> 在范围内。</p>
+</li>
+<li>
+<p style="margin:0 0 16px"><span>127+1</span> 没有额外的第九位进位，但发生八位有符号溢出。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">固定位宽模型不等于所有语言的默认行为。C 有符号整数运算溢出不能当作可靠回绕。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">七、灰度图与位平面</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 八位灰度图</h2>
+<p style="margin:0 0 16px">每个像素用八位记录亮度，常见表示中零为黑、255 为白，中间值为灰色。</p>
+<p style="margin:0 0 16px">“八位”指每个像素的位数，不是只有八个像素或八种灰色。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 位平面</h2>
+<p style="margin:0 0 16px">提取所有像素的同一位，并保留空间位置，得到一张二值图。八位灰度图可拆成八个位平面；全部保留可恢复原像素值。</p>
+<p style="margin:0 0 16px">提取非负字节值 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x</code> 的第 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">k</code> 位：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+(x &gt;&gt; k) &amp; 1
+
+<p></code></pre></p>
+<p style="margin:0 0 16px">最低位使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x &amp; 1</code>。偶数最低位为零，奇数为一。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 作用</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">分析不同权重的图像信息。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">观察细节、噪声或可能的隐写模式。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">用于某些图像编码和渐进传输。</p>
+</li>
+</ul>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+150：10010110
+
+<p>151：10010111</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">改变最低位只改变一级亮度，通常不明显；改变最高位会改变128级亮度。</p>
+<p style="margin:0 0 16px">隐写不自动提供加密。某个位平面有图案不单独证明存在隐写；看起来杂乱也不证明没有隐写。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">八、编码、哈希、加密、压缩与隐藏</h1>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">方法</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">主要目的</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">保密性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">编码</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">换一种表示</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不提供</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">密码学哈希</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">生成摘要</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不能单独当作保密手段</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">加密</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">让无密钥者难以读取</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">正确使用时提供</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">压缩</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">减少体积</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">本身不提供</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">数据隐藏</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">隐藏信息的存在或位置</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不能仅凭隐藏保证</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">无损压缩可完整恢复；有损压缩不能。小数据或已压缩数据不保证压缩后更小。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. Hash 与 SHA-256</h2>
+<p style="margin:0 0 16px">Hash 叫哈希或散列。密码学哈希把输入字节计算成固定长度摘要。</p>
+<p style="margin:0 0 16px">SHA-256 属于 SHA-2 家族，普通计算不需要秘密密钥。</p>
+<div>256 位=32 字节=64 个Hex字符</div>
+<p style="margin:0 0 16px">SHA-512：</p>
+<div>512 位=64 字节=128 个Hex字符</div>
+<p style="margin:0 0 16px">摘要本身的字节数，与摘要的 Hex 文本长度不同。SHA-256 摘要的 Hex 文本若按 ASCII 或 UTF-8 保存，不附加换行等内容，占64字节。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">大致计算过程</h3>
+<p style="margin:0 0 16px">输入按规则补充数据和长度信息，分成512位块，通过多轮位运算、固定宽度加法等更新状态，最终输出256位摘要。SHA-256 使用32位字，每块有64轮处理。无需现在背算法细节。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">关键性质</h3>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">相同输入字节得到相同摘要。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">输入稍变，摘要通常大幅变化。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">难以从摘要寻找对应输入，称为原像抗性。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">难以找到不同输入具有相同摘要，称为碰撞抗性。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">不同输入摘要相同叫碰撞。碰撞可能存在，安全目标是难以找到。哈希不能像可逆编码一样唯一还原输入。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 文件哈希与可信来源</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">摘要不同：在计算正确、算法相同的前提下，内容不同。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">安全哈希匹配：通常可极有把握地认为内容一致。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">不证明文件无恶意，也不自动证明官方来源。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">攻击者同时替换文件和页面摘要，校验仍可能通过。因此要验证参考摘要的可信来源；数字签名还涉及验证公钥的可信对应关系。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">九、密码哈希、盐值与枚举</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 候选空间</h2>
+<p style="margin:0 0 16px">六位数字密码允许零开头：</p>
+<div>N=10<sup>6</sup></div>
+<p style="margin:0 0 16px">每秒尝试 <span>r</span> 次，忽略额外开销时，遍历全部候选约需：</p>
+<div>T=N / r</div>
+<p style="margin:0 0 16px">候选均匀随机、按不重复顺序尝试时，平均约需检查一半候选。</p>
+<p style="margin:0 0 16px">在线尝试可受服务器限速；离线尝试不受网站登录限速直接约束。不能解码，不等于不能猜。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 盐值</h2>
+<p style="margin:0 0 16px">盐值是为密码记录生成的随机值，通常公开保存。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+密码相同 + 盐值不同 → 计算结果通常不同
+
+<p></code></pre></p>
+<p style="margin:0 0 16px">作用是减少预计算和跨账户复用猜测计算的机会，不阻止针对单账户的枚举。</p>
+<p style="margin:0 0 16px">登录验证时复用保存的盐值和参数，不重新生成随机盐值。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 专用密码哈希</h2>
+<p style="margin:0 0 16px">Argon2id、scrypt、bcrypt、PBKDF2 等通过可调的时间成本，或时间与内存成本，提高猜测代价。</p>
+<p style="margin:0 0 16px">SHA-256 很快，不宜直接替代专用密码哈希。实现应使用成熟库，不自行设计密码存储方案。</p>
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">十、保密、防篡改与权限边界</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 三个目标</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">保密：不让无权限者读懂。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">完整性保护：让未经授权的修改难以被接受。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">来源认证：确认来自相应密钥持有者或签名者。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">“防篡改”通常不是让字节绝对不能改，而是修改后不能通过验证。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. HMAC、签名与认证加密</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">机制</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">内容可读性</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">篡改检测</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">Base64</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">可解码读取</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不提供</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">明文附安全HMAC</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">可读</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">提供</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">正确使用认证加密</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">无密钥者难以读取</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">提供</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">HMAC 使用秘密密钥生成认证标签，不负责加密消息。普通哈希不使用秘密密钥；若攻击者能同时替换消息和摘要，普通哈希不足以抵御这种修改。</p>
+<p style="margin:0 0 16px">数字签名不自动保密；验证还需确认公钥与可信签名者的对应关系。签名也不保证内容没有恶意。</p>
+<p style="margin:0 0 16px">单纯加密不一定检测篡改，认证加密同时保护机密性与完整性。示例算法有 AES-GCM、ChaCha20-Poly1305，具体使用留待实操。</p>
+<p style="margin:0 0 16px">防篡改不等于防重放。有效旧消息被重新发送，还需要序号、一次性标识等机制防护。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 可见性、身份与权限</h2>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>
+<p style="margin:0 0 16px">可见性：界面有没有显示。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">身份认证：你是谁。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">权限检查：你被允许做什么。</p>
+</li>
+<li>
+<p style="margin:0 0 16px">信任边界：哪些输入不能直接当作可信命令。</p>
+</li>
+</ul>
+<p style="margin:0 0 16px">隐藏字段或编码 Cookie 不等于秘密。已经发送给浏览器的数据，不能只靠隐藏界面保护。</p>
+<p style="margin:0 0 16px">登录成功不等于能读取所有人的订单。服务器必须针对请求资源检查权限。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">4. 系统提示中的秘密</h2>
+<p style="margin:0 0 16px">把真实密钥放进模型可读提示，再要求不要透露，不能单独作为可靠的保密边界。</p>
+<p style="margin:0 0 16px">外部网页、文档等可能包含提示注入，试图把材料内容变成应执行指令。</p>
+<p style="margin:0 0 16px">合理设计：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">
+模型提出工具请求
+
+<pre><code>↓
+</code></pre>
+<p>服务器独立检查身份、权限、参数与允许的操作</p>
+<pre><code>↓
+</code></pre>
+<p>执行被允许的操作</p>
+<pre><code>↓
+</code></pre>
+<p>只返回必要数据</p>
+<p></code></pre></p>
+<p style="margin:0 0 16px">密钥留在服务器。文档里的“我是管理员”不是授权凭证，模型说“有权限”也不能代替程序检查。</p>
+</div>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/">https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80/">基础</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">学习笔记：数据表示、整数行为与秘密保护</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">一、数制与数据表示</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">1. bit、byte 与位宽</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">2. 二进制与十六进制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">二、整数、字符、文本与字节</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.1.</span> <span class="toc-text">1. 整数与字符不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.2.</span> <span class="toc-text">2. ASCII、Unicode、UTF-8</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.3.</span> <span class="toc-text">3. 字符数不等于字节数</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">三、编码与多层转换</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.1.</span> <span class="toc-text">1. Hex</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.2.</span> <span class="toc-text">2. Base64 与 Base32</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.2.1.</span> <span class="toc-text">标准 Base64</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.2.2.</span> <span class="toc-text">标准 Base32</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">4.2.3.</span> <span class="toc-text">Base100 的讨论</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.3.</span> <span class="toc-text">3. URL 百分号编码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.4.</span> <span class="toc-text">4. HTML 字符引用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">四、大端与小端</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">五、位运算与逆向还原</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.1.</span> <span class="toc-text">1. 基础规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.2.</span> <span class="toc-text">2. 异或性质</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">6.2.1.</span> <span class="toc-text">循环密钥</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.3.</span> <span class="toc-text">3. 移位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.4.</span> <span class="toc-text">4. 掩码与截断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.5.</span> <span class="toc-text">5. 运算的正向与逆向</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.6.</span> <span class="toc-text">6. 重排与异或</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.7.</span> <span class="toc-text">7. 按位运算与逻辑运算</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">六、补码、扩展与整数边界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.1.</span> <span class="toc-text">1. 同一位模式，不同解释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.2.</span> <span class="toc-text">2. 求负数补码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.3.</span> <span class="toc-text">3. 零扩展与符号扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.4.</span> <span class="toc-text">4. 溢出与回绕</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">8.</span> <span class="toc-text">七、灰度图与位平面</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">8.1.</span> <span class="toc-text">1. 八位灰度图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">8.2.</span> <span class="toc-text">2. 位平面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">8.3.</span> <span class="toc-text">3. 作用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">9.</span> <span class="toc-text">八、编码、哈希、加密、压缩与隐藏</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">9.1.</span> <span class="toc-text">1. Hash 与 SHA-256</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">9.1.1.</span> <span class="toc-text">大致计算过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">9.1.2.</span> <span class="toc-text">关键性质</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">9.2.</span> <span class="toc-text">2. 文件哈希与可信来源</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">10.</span> <span class="toc-text">九、密码哈希、盐值与枚举</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">10.1.</span> <span class="toc-text">1. 候选空间</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">10.2.</span> <span class="toc-text">2. 盐值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">10.3.</span> <span class="toc-text">3. 专用密码哈希</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">11.</span> <span class="toc-text">十、保密、防篡改与权限边界</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">11.1.</span> <span class="toc-text">1. 三个目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">11.2.</span> <span class="toc-text">2. HMAC、签名与认证加密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">11.3.</span> <span class="toc-text">3. 可见性、身份与权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">11.4.</span> <span class="toc-text">4. 系统提示中的秘密</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/01/%E6%9E%81%E5%AE%A22026wp/" title="无标题">无标题</a><time datetime="2026-10-31T16:14:23.699Z" title="发表于 2026-11-01 00:14:23">2026-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/" title="ctf基础：数制，文本，编码，加密">ctf基础：数制，文本，编码，加密</a><time datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/" title="ctf基础：文件识别，文件偏移">ctf基础：文件识别，文件偏移</a><time datetime="2026-10-31T05:24:46.711Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E7%BD%91%E7%BB%9CHTTP%EF%BC%8C%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE/" title="ctf基础：网络HTTP，结构化数据">ctf基础：网络HTTP，结构化数据</a><time datetime="2026-10-31T05:24:46.706Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9ALinux%E4%B8%8Eshell/" title="ctf基础：Linux与shell">ctf基础：Linux与shell</a><time datetime="2026-10-31T05:24:46.701Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ctf基础：文件识别，文件偏移 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="文件识别，文件偏移基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctf基础：文件识别，文件偏移">
+<meta property="og:url" content="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="文件识别，文件偏移基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-31T05:24:46.711Z">
+<meta property="article:modified_time" content="2026-10-31T10:21:43.349Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ctf基础：文件识别，文件偏移",
+  "url": "https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-10-31T05:24:46.711Z",
+  "dateModified": "2026-10-31T10:21:43.349Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ctf基础：文件识别，文件偏移',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">ctf基础：文件识别，文件偏移</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ctf基础：文件识别，文件偏移</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-31T05:24:46.711Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-31T10:21:43.349Z" title="更新于 2026-10-31 18:21:43">2026-10-31</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div lang="zh-CN" style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Microsoft YaHei,sans-serif;line-height:1.6;color:inherit;overflow-wrap:break-word;">
+
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">学习笔记：文件识别、字节观察与偏移</h1>
+
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">一、文件名、实际内容与工具识别</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 三种信息要分开看</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">信息</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">观察对象</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">能说明什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">扩展名</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文件名的一部分</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">名称声称的类型</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">真实字节</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文件实际保存的数据</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">分析格式与结构的直接依据</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">工具识别结果</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">工具根据规则作出的判断</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">工具认为它像什么</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">**修改后缀不会转换格式。**把 ZIP 改名为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.jpg</code>，内容仍然是原来的 ZIP 字节。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">file</code> 的判断也不是最终裁决，需要结合字节、结构和其他工具验证。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 文件签名或魔数</h3>
+<p style="margin:0 0 16px">不少格式在约定位置包含特定字节：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">格式</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">常见起始字节，按十六进制显示</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">PNG</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">89 50 4E 47 0D 0A 1A 0A</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">JPEG</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">FF D8 FF</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">GIF</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">47 49 46 38 37 61</code> 或 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">47 49 46 38 39 61</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ELF</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">7F 45 4C 46</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ZIP</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">常见为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">50 4B 03 04</code>，也存在其他情况</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">注意：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>这里显示的是真实字节的十六进制表示，不是文件中保存了同样的 Hex 文本。</li>
+<li><strong>发现签名，只能先说明存在格式线索。</strong></li>
+<li>不能仅凭签名保证文件完整、能正常解析或内容安全。</li>
+</ul>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">二、三个基本观察工具</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">工具</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">file</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">根据规则识别文件类型</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strings</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">搜索符合条件的可打印字符片段</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">xxd</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">查看真实字节和文件偏移</td>
+</tr>
+</tbody>
+</table>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">file</code>：识别类型及其局限</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">file 文件名
+file -L 文件名
+</code></pre>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-L</code> 表示跟随符号链接检查目标。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">file</code> 会使用文件系统信息、内容特征规则和文本特征等进行判断，<strong>不只是看扩展名，也不只是检查开头四字节</strong>。</p>
+<p style="margin:0 0 16px">可能出现的情况：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>格式较新、少见或特征不足，无法具体识别。</li>
+<li>文件损坏、截断，识别不完整。</li>
+<li>识别外层结构，但没有报告全部内嵌数据。</li>
+<li>某些人工构造的特征造成误判。</li>
+<li>能识别某些带额外前缀的格式，但不保证识别所有情况。</li>
+</ul>
+<p style="margin:0 0 16px">如果输出：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">data
+</code></pre>
+<p style="margin:0 0 16px">只表示没有得到更具体的识别结果，<strong>不等于已经加密、没有结构或文件损坏</strong>。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strings</code>：查找可打印片段</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">strings -a 文件名
+strings -a -n 3 文件名
+strings -a -t x 文件名
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">选项</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-a</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">扫描整个文件</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-n 3</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">最短字符串长度改为三个字符</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-t x</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">用十六进制显示字符串的起始文件偏移</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">本次使用环境中的默认最短长度为四个字符。</p>
+<p style="margin:0 0 16px">注意：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>默认没有显示某段文字，不代表文件里没有它。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strings</code> 不理解字符串的用途。</li>
+<li>找到 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">SECRET=42</code>，不证明它是真密码或程序一定会使用它。</li>
+<li>压缩、加密或某些编码下的文本，不一定能直接找到。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3. <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">xxd</code>：查看字节与偏移</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">xxd -g 1 文件名
+xxd -g 1 -l 32 文件名
+xxd -g 1 -s 0x100 -l 16 文件名
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">选项</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-g 1</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">每组显示一个字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-l 32</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">最多显示三十二个字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-s 0x100</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">从文件偏移 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x100</code> 开始</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">输出示例：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">00000000: 00 01 48 45 4c 4c 4f 00 ff 53 45 43 52 45 54 3d  ..HELLO..SECRET=
+00000010: 34 32 00 45 4e 44 0a                             42.END.
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>左列：这一行第一个字节的文件偏移，按十六进制显示。</li>
+<li>中间：真实字节的十六进制表示。</li>
+<li>右列：可打印字符预览。</li>
+</ul>
+<p style="margin:0 0 16px">**右侧的点不一定是真实句点。**许多不可打印字节都会显示为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.</code>；真实句点字符的 ASCII 字节是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">2E</code>。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">00000010</code> 是十六进制 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x10</code>，等于十进制 <span>16</span>，不是十进制的 <span>10</span>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">三、文件偏移与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">dd</code> 提取</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 文件偏移从零开始</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">字节：41 42 43 44
+偏移： 0  1  2  3
+字符： A  B  C  D
+</code></pre>
+<p style="margin:0 0 16px">偏移 <span>2</span> 对应第三个字节 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">43</code>。</p>
+<p style="margin:0 0 16px"><strong>某个位置的一个字节</strong>，与<strong>从该位置开始的一段数据</strong>，不是同一个问题。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">dd</code> 的基本用法</h3>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">dd</code> 是按块复制数据、支持部分转换的工具。它不理解 ZIP、PNG 或 ELF 的格式结构。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">dd if=输入文件 of=输出文件 bs=1 skip=9 count=9 status=none
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">参数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">if=</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">输入文件；省略时通常从标准输入读取</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">of=</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">输出文件</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">bs=1</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">每块一个字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">skip=9</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">跳过九个输入块</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">count=9</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">最多复制九个输入块</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">status=none</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">隐藏常规统计信息，错误仍会报告</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">本节用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">bs=1</code>，使 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">skip</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">count</code> 的块数与字节数对应。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">bs=4 skip=2 count=3
+</code></pre>
+<p style="margin:0 0 16px">表示跳过 <span>8</span> 字节，最多复制 <span>12</span> 字节。</p>
+<p style="margin:0 0 16px"><strong>没有设置 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">count</code> 时，会复制到输入结束，包括可能存在的尾部额外数据。</strong></p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3. 提取后偏移重新计算</h3>
+<p style="margin:0 0 16px">原样、连续提取时：</p>
+<div>
+新文件偏移=原文件偏移-提取起点
+</div>
+<p style="margin:0 0 16px">例如：从原文件偏移 <span>12</span> 开始提取，某字节原偏移为 <span>20</span>，新文件中该字节的偏移为 <span>20-12=8</span>。</p>
+<p style="margin:0 0 16px"><strong>只有提取起点对应的新偏移是零，不是所有目标字节都变成零。</strong></p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4. 提取后必须检查</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">file 输出文件
+xxd -g 1 输出文件
+wc -c &lt; 输出文件
+</code></pre>
+<p style="margin:0 0 16px">分别检查类型、内容和实际字节数。输入不足时，实际复制量可能少于预期。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">四、原件、副本、哈希与单字节修改</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 建立工作副本并比较</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">cp -i 原件 工作副本
+sha256sum 原件 工作副本
+</code></pre>
+<p style="margin:0 0 16px">普通文件的 SHA-256 针对内容字节，不包含文件名。因此内容相同、名字不同，摘要仍相同。</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>摘要不同：内容不同。</li>
+<li>安全哈希相同：可以极有把握地认为内容一致。</li>
+<li>摘要不能告诉我们改在何处、改了多少字节。</li>
+<li>哈希匹配不证明内容安全或来源可信。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 保存基准并校验</h3>
+<p style="margin:0 0 16px">在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">~/env-practice</code> 中：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">sha256sum work/byte-observe-01/sample.jpg &gt; work/byte-observe-01/original.sha256
+sha256sum -c work/byte-observe-01/original.sha256
+</code></pre>
+<p style="margin:0 0 16px">输出：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">work/byte-observe-01/sample.jpg: OK
+</code></pre>
+<p style="margin:0 0 16px">表示当前原件与基准记录匹配。</p>
+<p style="margin:0 0 16px">注意：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>校验时，记录中的相对路径按当前工作目录解析。</li>
+<li>不要修改文件后重新覆盖基准，再宣称“文件没变”。</li>
+<li>基准记录本身也需要可信、妥善保留。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3. 修改已有文件的指定字节</h3>
+<p style="margin:0 0 16px">本次只修改工作副本的偏移 <span>2</span>，将 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">48</code>（<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">H</code>）改为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">68</code>（<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">h</code>）：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">printf '\x68' | dd of=work/byte-observe-01/sample-work.bin bs=1 seek=2 count=1 conv=notrunc status=none
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">参数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">seek=2</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">从输出文件的字节偏移 <span>2</span> 处开始写入</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">conv=notrunc</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不截断已有输出文件，保留其他内容</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">区别：<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">skip</code> 跳过输入，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">seek</code> 定位输出。</p>
+<p style="margin:0 0 16px"><strong>输出路径不能误写成原件；修改已有文件时不能漏掉本例所需的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">conv=notrunc</code>。</strong></p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4. 验证“改对了”与“只改了这里”</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">xxd -g 1 工作副本
+cmp -l 原件 工作副本
+wc -c 原件 工作副本
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>看目标位置：确认改对了。</li>
+<li>比较整个文件：排除其他位置变化。</li>
+<li>比较长度：排除插入、截短等问题。</li>
+</ul>
+<p style="margin:0 0 16px">本次 GNU <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">cmp -l</code> 的预期输出：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">3 110 150
+</code></pre>
+<p style="margin:0 0 16px">含义：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">3</code>：第三个字节，<strong>从一计数</strong>，对应文件偏移 <span>2</span>。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">110</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">150</code>：两个字节值，按<strong>八进制</strong>显示。</li>
+<li>分别对应十六进制 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">48</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">68</code>。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5. 修改记录模板</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">修改对象：
+文件偏移及其进制：
+原字节：
+新字节：
+修改目的与依据：
+验证结果：
+原件基准校验结果：
+</code></pre>
+<p style="margin:0 0 16px">本次单字节修改是教学练习，<strong>不等于完成了一次有格式依据的文件修复</strong>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">六、ELF 基础：头、节与段</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 三种结构</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">结构</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ELF 头</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">描述位数、端序、架构、入口及其他表的位置等</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">程序头表</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">描述段及加载相关信息</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">节头表</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">描述按用途组织的节</td>
+</tr>
+</tbody>
+</table>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>节</strong>偏向内容用途，例如代码、数据、符号信息。</li>
+<li><strong>段</strong>偏向程序加载布局。</li>
+<li>一个段可以包含多个节。</li>
+<li>并非所有节都需要加载进内存。</li>
+<li>表中的记录不是它所描述的内容本身。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 观察命令</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">file -L /bin/ls
+readelf -h /bin/ls
+readelf -lW /bin/ls
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-h</code>：ELF 头。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-l</code>：程序头表。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-W</code>：宽格式显示。</li>
+</ul>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4. <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">LOAD</code> 关键字段</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">字段</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">Offset</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">段的文件起始偏移</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">VirtAddr</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ELF 中记录的段起始虚拟地址</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">FileSiz</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">段在文件中的内容大小</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">MemSiz</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">段所需的内存大小</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">Flg</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">读、写、执行权限</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">权限：<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">R</code> 为读，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">W</code> 为写，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">E</code> 为执行。</p>
+<p style="margin:0 0 16px">若 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">MemSiz</code> 大于 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">FileSiz</code>，可加载段中多出的区域在加载时补零，常与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.bss</code> 等有关。</p>
+<p style="margin:0 0 16px"><strong>这部分内存没有该段中的对应文件字节，不能直接从原文件提取。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">七、文件偏移、虚拟地址与运行时地址</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 概念区别</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">概念</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文件偏移</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">相对文件开头的字节位置</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">段内偏移</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">相对该段起点的距离</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">虚拟地址</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">进程虚拟地址空间中的位置</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">运行时地址</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">本次运行实际使用的位置；普通 Linux 用户程序中通常仍是虚拟地址</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">不同进程使用相同虚拟地址，不一定对应同一块物理内存；也可能因共享映射而对应同一块。</p>
+<p style="margin:0 0 16px">ASLR 等机制可能使加载位置随运行变化。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 文件偏移与 ELF 虚拟地址换算</h3>
+<p style="margin:0 0 16px">确认目标位于某个可加载段的文件内容范围内后：</p>
+<div>
+段内偏移=文件偏移-段的文件起始偏移
+</div>
+<div>
+ELF 虚拟地址=段的 VirtAddr+段内偏移
+</div>
+<p style="margin:0 0 16px">若已知适用的加载偏移：</p>
+<div>
+运行时虚拟地址=加载偏移+ELF 虚拟地址
+</div>
+<p style="margin:0 0 16px">不能对整个文件任意套用，必须先确认所属段。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">八、磁盘扇区与分区坐标</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 扇区编号与字节偏移</h3>
+<p style="margin:0 0 16px">LBA 可在本节理解为逻辑扇区编号，通常从零开始。</p>
+<p style="margin:0 0 16px">逻辑扇区大小可能是 <span>512</span> 或 <span>4096</span> 字节等，必须确认。逻辑扇区大小与物理扇区大小也可能不同。</p>
+<div>
+整盘字节偏移=LBA×每扇区字节数+扇区内偏移
+</div>
+<p style="margin:0 0 16px">例：每扇区 <span>512</span> 字节，LBA <span>10</span> 内偏移 <span>8</span>：</p>
+<div>
+10×512+8=5128
+</div>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 分区起点</h3>
+<p style="margin:0 0 16px">某分区从 LBA <span>2048</span> 开始，每扇区 <span>512</span> 字节；目标位于分区内部字节偏移 <span>1024</span>：</p>
+<div>
+2048×512+1024=1049600
+</div>
+<p style="margin:0 0 16px">必须说明偏移相对整盘、分区还是文件。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3. 换算边界</h3>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>文件可能在磁盘上分散存放。</li>
+<li><strong>不能直接用“分区起点＋文件内部偏移”得到文件字节的整盘位置。</strong></li>
+<li>需要文件系统分配信息。</li>
+<li>扇区编号乘大小可直接对应镜像偏移，需要原始字节布局等适用条件；带封装的镜像不能机械套用。</li>
+<li>本次只做概念与计算，没有操作真实磁盘设备。</li>
+</ul>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">九、EVM 存储槽坐标</h2>
+<p style="margin:0 0 16px">本节“存储槽”指 EVM 合约持久存储的槽，不是磁盘扇区。</p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1. 基本概念</h3>
+<p style="margin:0 0 16px">每个槽保存：</p>
+<div>
+256 位=32 字节
+</div>
+<p style="margin:0 0 16px">槽编号是一个 <span>256</span> 位的键。概念上未写入的槽读取为零，不代表所有槽都预先分配了物理空间。</p>
+<p style="margin:0 0 16px"><strong>槽编号不是文件偏移，不能无依据地乘以 <span>32</span> 后用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">dd</code> 提取。</strong></p>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2. 变量可能共用一个槽</h3>
+<p style="margin:0 0 16px">在普通、没有继承等额外因素的顺序布局示例中：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">uint128 a;
+uint128 b;
+uint256 c;
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">变量</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">a</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">槽 <span>0</span> 的低 <span>16</span> 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">b</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">槽 <span>0</span> 的高 <span>16</span> 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">c</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">槽 <span>1</span></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">按高位在左、低位在右展示槽值：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0">[ b：高 16 字节 ][ a：低 16 字节 ]
+</code></pre>
+<p style="margin:0 0 16px">所以定位打包变量需要：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>槽编号。</li>
+<li>槽内位置。</li>
+<li>变量长度。</li>
+</ul>
+
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+</div>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/">https://lambda.monster/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80/">基础</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">学习笔记：文件识别、字节观察与偏移</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">一、文件名、实际内容与工具识别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 三种信息要分开看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. 文件签名或魔数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">二、三个基本观察工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. file：识别类型及其局限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. strings：查找可打印片段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. xxd：查看字节与偏移</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">三、文件偏移与 dd 提取</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 文件偏移从零开始</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. dd 的基本用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 提取后偏移重新计算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.4.</span> <span class="toc-text">4. 提取后必须检查</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">四、原件、副本、哈希与单字节修改</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.1.</span> <span class="toc-text">1. 建立工作副本并比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.2.</span> <span class="toc-text">2. 保存基准并校验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.3.</span> <span class="toc-text">3. 修改已有文件的指定字节</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.4.</span> <span class="toc-text">4. 验证“改对了”与“只改了这里”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.5.</span> <span class="toc-text">5. 修改记录模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.5.</span> <span class="toc-text">六、ELF 基础：头、节与段</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. 三种结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. 观察命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.3.</span> <span class="toc-text">4. LOAD 关键字段</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.6.</span> <span class="toc-text">七、文件偏移、虚拟地址与运行时地址</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. 概念区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. 文件偏移与 ELF 虚拟地址换算</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.7.</span> <span class="toc-text">八、磁盘扇区与分区坐标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.1.</span> <span class="toc-text">1. 扇区编号与字节偏移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.2.</span> <span class="toc-text">2. 分区起点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.3.</span> <span class="toc-text">3. 换算边界</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.8.</span> <span class="toc-text">九、EVM 存储槽坐标</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.1.</span> <span class="toc-text">1. 基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.2.</span> <span class="toc-text">2. 变量可能共用一个槽</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/01/%E6%9E%81%E5%AE%A22026wp/" title="无标题">无标题</a><time datetime="2026-10-31T16:14:23.699Z" title="发表于 2026-11-01 00:14:23">2026-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/" title="ctf基础：数制，文本，编码，加密">ctf基础：数制，文本，编码，加密</a><time datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/" title="ctf基础：文件识别，文件偏移">ctf基础：文件识别，文件偏移</a><time datetime="2026-10-31T05:24:46.711Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E7%BD%91%E7%BB%9CHTTP%EF%BC%8C%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE/" title="ctf基础：网络HTTP，结构化数据">ctf基础：网络HTTP，结构化数据</a><time datetime="2026-10-31T05:24:46.706Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9ALinux%E4%B8%8Eshell/" title="ctf基础：Linux与shell">ctf基础：Linux与shell</a><time datetime="2026-10-31T05:24:46.701Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
