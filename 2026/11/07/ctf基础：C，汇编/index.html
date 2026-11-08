@@ -1,0 +1,1708 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ctf基础：C，汇编 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C，汇编基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ctf基础：C，汇编">
+<meta property="og:url" content="https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="C，汇编基础">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-11-07T04:45:29.071Z">
+<meta property="article:modified_time" content="2026-11-07T04:46:58.100Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ctf基础：C，汇编",
+  "url": "https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-11-07T04:45:29.071Z",
+  "dateModified": "2026-11-07T04:46:58.100Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ctf基础：C，汇编',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">ctf基础：C，汇编</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ctf基础：C，汇编</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-11-07T04:45:29.071Z" title="发表于 2026-11-07 12:45:29">2026-11-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-11-07T04:46:58.100Z" title="更新于 2026-11-07 12:46:58">2026-11-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div lang="zh-CN" style="font-family:Segoe UI,Microsoft YaHei,sans-serif;line-height:1.6;color:inherit;overflow-wrap:break-word;">
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">C，汇编</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">一、C 类型、对象与字节</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.1 C 对象的含义</h3>
+<p style="margin:0 0 16px">C 中的“对象”可以理解为一块用于存放值的存储区域，不是面向对象语言中“类的实例”那个特定含义。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int count = 3;
+char input[32];
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">count</code> 是一个 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code> 对象。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">input</code> 是一个数组对象。</li>
+<li>数组中的每个元素也是对象。</li>
+</ul>
+<p style="margin:0 0 16px">分析一个对象时，要分别考虑：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>类型</strong>：如何解释其值、允许进行哪些操作。</li>
+<li><strong>大小</strong>：占多少个 C 字节。</li>
+<li><strong>地址</strong>：存储位置在哪里。</li>
+<li><strong>生命周期</strong>：什么时候存在，什么时候失效。</li>
+<li><strong>边界</strong>：允许访问的范围。</li>
+</ol>
+<p style="margin:0 0 16px">逆向分析中，看到四字节内存不等于就能断定它是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>；还要结合指令、用途和数据流判断。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.2 C 字节与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">CHAR_BIT</code></h3>
+<p style="margin:0 0 16px">C 规定：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sizeof(char) == 1
+</code></pre>
+<p style="margin:0 0 16px">但这里的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">1</code> 表示一个 <strong>C 字节</strong>，不直接表示八位。</p>
+<p style="margin:0 0 16px">每个 C 字节包含多少位，由 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&lt;limits.h&gt;</code> 中的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">CHAR_BIT</code> 给出。</p>
+<p style="margin:0 0 16px">当前 Linux x86-64 环境通常满足：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">CHAR_BIT == 8
+</code></pre>
+<p style="margin:0 0 16px">因此，本笔记中的实际字节示例按八位字节解释。</p>
+<p style="margin:0 0 16px"><strong>不能把“当前平台每字节八位”写成“C 标准规定每字节只能八位”。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.3 常见类型大小与平台差异</h3>
+<p style="margin:0 0 16px">当前 Linux x86-64 常见的 LP64 数据模型：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">类型</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">常见大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">char</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">1 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">short</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">2 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">4 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">long</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">8 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">long long</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">8 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">普通对象指针</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">8 字节</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">Windows x64 常用 LLP64 模型，其中 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">long</code> 通常是四字节。</p>
+<p style="margin:0 0 16px">所以：</p>
+<blockquote style="margin:0 0 16px;padding:0 1em;color:inherit;border-left:.25em solid #d1d9e0">
+<p style="margin:0 0 16px"><strong>同样是64位系统，不代表所有整数类型都与指针一样宽，也不代表不同操作系统的类型大小相同。</strong></p>
+</blockquote>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">char</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">signed char</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">unsigned char</code> 是不同类型；普通 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">char</code> 的有符号性由实现决定。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.4 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">sizeof</code> 的含义与用法</h3>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">sizeof</code> 给出对象或类型占用的 C 字节数，结果类型是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">size_t</code>。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int values[5];
+int *p = values;
+</code></pre>
+<p style="margin:0 0 16px">在当前环境中：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sizeof(values)   // 20：整个数组
+sizeof(p)        // 8：指针对象
+sizeof(*p)       // 4：一个 int
+</code></pre>
+<p style="margin:0 0 16px">计算真实数组的元素数量：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sizeof(values) / sizeof(values[0])
+</code></pre>
+<p style="margin:0 0 16px">前提是这里的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">values</code> 仍然是数组，不是已经转换后的指针。</p>
+<p style="margin:0 0 16px">打印 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">sizeof</code> 的结果应使用匹配的格式：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">printf(&quot;%zu\n&quot;, sizeof(values));
+</code></pre>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.5 固定宽度整数类型</h3>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&lt;stdint.h&gt;</code> 提供：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">uint8_t
+int32_t
+uint64_t
+</code></pre>
+<p style="margin:0 0 16px">这些精确宽度类型只有在实现支持对应表示时才提供。</p>
+<p style="margin:0 0 16px">在当前环境中，它们适合表达：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>明确宽度的二进制字段；</li>
+<li>字节变换；</li>
+<li>位掩码；</li>
+<li>协议与文件结构中的整数。</li>
+</ul>
+<p style="margin:0 0 16px">但固定宽度类型<strong>不会取消整数提升</strong>。例如 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">uint8_t</code> 参与加法时，仍可能先提升为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">二、数组、指针、字符串与生命周期</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.1 数组不是指针</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char input[32];
+char *p = input;
+</code></pre>
+<p style="margin:0 0 16px">两者不同：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">input</code> 是包含32个字符元素的数组。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p</code> 是保存地址的指针对象。</li>
+</ul>
+<p style="margin:0 0 16px">数组名在许多表达式中会转换为指向首元素的指针，因此看起来经常能当指针使用。</p>
+<p style="margin:0 0 16px">但：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sizeof(input)  // 数组整体大小
+sizeof(p)      // 指针大小
+</code></pre>
+<p style="margin:0 0 16px">结果不同。</p>
+<p style="margin:0 0 16px">数组对象也不能像普通指针变量那样重新赋值：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">p = other;       // 类型兼容时可以
+input = other;   // 不允许数组整体这样赋值
+</code></pre>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.2 地址与解引用</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int value = 42;
+int *p = &amp;value;
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&amp;value</code>：取得对象地址。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p</code>：保存这个地址。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">*p</code>：访问该地址所指的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code> 对象。</li>
+</ul>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">*p = 7;
+</code></pre>
+<p style="margin:0 0 16px">修改的是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">value</code>。</p>
+<p style="margin:0 0 16px">必须保证指针：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>指向仍然有效的对象；</li>
+<li>满足相应类型的访问要求；</li>
+<li>没有越过允许边界；</li>
+<li>不是未初始化的随机值。</li>
+</ul>
+<p style="margin:0 0 16px">“某个地址能显示出字节”不自动意味着程序可以按任意类型合法访问它。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.3 指针运算以元素大小为单位</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int values[4];
+int *p = values;
+</code></pre>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">p + 1
+</code></pre>
+<p style="margin:0 0 16px">前进一个 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>，当前平台通常是四字节，而不是一字节。</p>
+<p style="margin:0 0 16px">数组下标的定义关系是：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">p[i]
+</code></pre>
+<p style="margin:0 0 16px">等价于：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">*(p + i)
+</code></pre>
+<p style="margin:0 0 16px">对四元素数组：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p + 0</code> 到 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p + 3</code> 指向元素。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p + 4</code> 可以作为尾后指针形成。</li>
+<li><strong>尾后指针不能被解引用。</strong></li>
+</ul>
+<p style="margin:0 0 16px">允许形成一个地址，不等于允许读取那个地址。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.4 字符串长度、容量与终止零</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char text[8] = &quot;cat&quot;;
+</code></pre>
+<p style="margin:0 0 16px">其字节开头为：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">63 61 74 00 00 00 00 00
+ c  a  t
+</code></pre>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">概念</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">本例结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">数组容量</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">8 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">字符串长度</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">3 字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">存放 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;cat&quot;</code> 至少需要</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">4 字节</td>
+</tr>
+</tbody>
+</table>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sizeof(text)  // 8
+strlen(text)  // 3
+</code></pre>
+<p style="margin:0 0 16px">其中：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">'\0'</code> 是数值为零的字符，作为字符串终止标记。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">'0'</code> 是字符零，当前 ASCII 兼容编码中为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x30</code>。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">'\n'</code> 是换行符，当前环境中为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x0a</code>。</li>
+</ul>
+<p style="margin:0 0 16px">三者不能混淆。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strlen</code> 不接收容量参数，只会寻找第一个终止零。如果对象范围内没有有效终止零，继续扫描可能造成越界读取。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.5 数组参数与容量信息</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">void inspect(char buf[32])
+{
+    printf(&quot;%zu\n&quot;, sizeof(buf));
+}
+</code></pre>
+<p style="margin:0 0 16px">函数参数中的数组声明会调整成指针参数。因此上面的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">sizeof(buf)</code> 是指针大小，不是32。</p>
+<p style="margin:0 0 16px">应显式传入容量：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">void inspect(char *buf, size_t capacity)
+{
+    /* 使用 capacity 判断允许访问的范围 */
+}
+</code></pre>
+<p style="margin:0 0 16px"><strong>函数知道指针值，不代表它自动知道指向对象有多大。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.6 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">fgets</code> 与输入边界</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char input[32];
+
+<p>if (fgets(input, sizeof input, stdin) &#x3D;&#x3D; NULL) {<br>    return 1;<br>}<br></code></pre></p>
+<p style="margin:0 0 16px">本例中，成功读取时：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>最多存放31个输入字节；</li>
+<li>再添加一个终止零；</li>
+<li>如果读到换行且空间足够，换行会被保留。</li>
+</ul>
+<p style="margin:0 0 16px">键入 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">cat</code> 后回车，常见内容为：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">63 61 74 0a 00
+</code></pre>
+<p style="margin:0 0 16px">去掉换行：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">input[strcspn(input, &quot;\n&quot;)] = '\0';
+</code></pre>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcspn</code> 返回从开头起连续不包含指定字符的长度。这里用于找到第一个换行的位置。</p>
+<p style="margin:0 0 16px">如果没有换行，它返回当前字符串长度，赋值位置就是已有的终止零。</p>
+<p style="margin:0 0 16px">注意两个边界：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>读入成功不等于已经读完整条输入。</strong> 过长输入可能只读入一部分。</li>
+<li><strong>容量安全不等于业务正确。</strong> 截断后的内容是否允许参与校验，仍需要程序设计决定。</li>
+</ol>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.7 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code> 与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">memcmp</code></h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code></h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">strcmp(a, b)
+</code></pre>
+<p style="margin:0 0 16px">比较两个终止零字符串。保证返回：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>负数：第一个字符串小于第二个；</li>
+<li>零：相等；</li>
+<li>正数：第一个字符串大于第二个。</li>
+</ul>
+<p style="margin:0 0 16px">不能假定只返回 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-1</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">1</code>。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">memcmp</code></h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">memcmp(a, b, n)
+</code></pre>
+<p style="margin:0 0 16px">比较指定的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">n</code> 个字节：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>不会因中途遇到终止零就停止；</li>
+<li>要求双方相应范围都可访问；</li>
+<li>适合二进制数据比较。</li>
+</ul>
+<p style="margin:0 0 16px">例如两块数据：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">41 00 42
+41 00 43
+</code></pre>
+<p style="margin:0 0 16px">若作为字符串比较，终止零后的差异不参与比较；若用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">memcmp</code> 比较三个字节，则能发现不同。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.8 内存复制不自动处理字符串语义</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">memcpy(dst, src, n);
+</code></pre>
+<p style="margin:0 0 16px">只复制 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">n</code> 个字节：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>不自动追加终止零；</li>
+<li>不自动检查目标容量；</li>
+<li>源、目标范围必须有效；</li>
+<li>两个范围不能重叠。</li>
+</ul>
+<p style="margin:0 0 16px">可能重叠时使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">memmove</code>。</p>
+<p style="margin:0 0 16px">因此，“复制完成”不等于“得到一个有效 C 字符串”。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.9 生命周期与悬空指针</h3>
+<p style="margin:0 0 16px">错误示例：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char *bad(void)
+{
+    char buf[16];
+    return buf;
+}
+</code></pre>
+<p style="margin:0 0 16px">函数返回后，局部数组生命周期结束。</p>
+<p style="margin:0 0 16px">即使原地址上暂时还保留旧字节，指针也不能因此继续合法使用。</p>
+<p style="margin:0 0 16px">类似问题还包括：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">free(p);
+</code></pre>
+<p style="margin:0 0 16px">之后继续访问原对象。变量 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p</code> 仍可能保留旧地址，但所指对象的生命周期已经结束。</p>
+<p style="margin:0 0 16px"><strong>地址数值还在，不等于对象还在。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">2.10 常见存储区域与限制</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">对象</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">常见实现位置</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">生命周期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">普通局部变量</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">栈或寄存器</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">通常与所在块或调用相关</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">动态分配对象</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">堆</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">分配到释放</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">全局与静态对象</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">数据区域</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">通常贯穿程序执行</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">字符串字面量</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">常见于只读区域</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">静态存储期</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">这些是常见实现，不是“所有局部变量都必须占一个栈槽”。</p>
+<p style="margin:0 0 16px">字符串字面量不应修改：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char *p = &quot;cat&quot;;
+p[0] = 'b';       // 未定义行为
+</code></pre>
+<p style="margin:0 0 16px">而：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char p[] = &quot;cat&quot;;
+p[0] = 'b';       // 修改可写数组
+</code></pre>
+<p style="margin:0 0 16px">二者不同。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">三、C 整数运算与类型转换规则</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.1 整数提升</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">unsigned char a = 250;
+unsigned char b = 10;
+
+<p>int result &#x3D; a + b;<br></code></pre></p>
+<p style="margin:0 0 16px">当前平台的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code> 能表示 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">unsigned char</code> 的全部值，因此两个操作数先提升为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>，相加得到260。</p>
+<p style="margin:0 0 16px">若写成：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">unsigned char result = a + b;
+</code></pre>
+<p style="margin:0 0 16px">仍然是先得到260，再转换到八位无符号类型，得到4。</p>
+<p style="margin:0 0 16px">关键过程：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">原始类型 → 整数提升 → 表达式计算 → 保存时转换
+</code></pre>
+<p style="margin:0 0 16px">不能直接说“两个八位数，所以加法一定在八位里执行”。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.2 有符号与无符号混合比较</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int a = -1;
+unsigned int b = 1;
+
+<p>int result &#x3D; a &lt; b;<br></code></pre></p>
+<p style="margin:0 0 16px">当前平台上，比较时 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">a</code> 会转换为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">unsigned int</code>，成为该类型最大值，所以结果为假。</p>
+<p style="margin:0 0 16px">分析方法：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>确认原始类型。</li>
+<li>做整数提升。</li>
+<li>判断通常算术转换后的共同类型。</li>
+<li>再进行运算或比较。</li>
+</ol>
+<p style="margin:0 0 16px"><strong>数学大小关系不能跳过语言的类型转换规则。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.3 无符号回绕</h3>
+<p style="margin:0 0 16px">对于 $n$ 位无符号整数，运算结果按模 $2^n$ 处理：</p>
+<p style="margin:0 0 16px">$$
+r=(a+b)\bmod 2^n
+$$</p>
+<p style="margin:0 0 16px">当前八位无符号类型中：</p>
+<p style="margin:0 0 16px">$$
+255+1\equiv 0\pmod{256}
+$$</p>
+<p style="margin:0 0 16px">但如果操作数先提升成 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>，就要先考虑提升后的计算，再考虑保存时转换。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.4 有符号溢出</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int value = INT_MAX;
+value = value + 1;
+</code></pre>
+<p style="margin:0 0 16px">C17 中，有符号算术溢出属于未定义行为。</p>
+<p style="margin:0 0 16px">不能因为某次机器运行得到最小负数，就认为标准保证回绕。</p>
+<p style="margin:0 0 16px">编译器可以依据“有效程序不会发生有符号溢出”进行优化，因此调试版观察到的现象，不一定能推广到其他优化设置。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.5 窄化转换与符号扩展</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">转为无符号窄类型</h4>
+<p style="margin:0 0 16px">超出范围时，按目标类型的模数转换。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">转为有符号类型</h4>
+<p style="margin:0 0 16px">若原值不可表示，C17 规定结果为实现定义的，或者产生实现定义的信号；不能统一当成无符号截断规则。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">扩展到更宽类型</h4>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>零扩展：高位补零。</li>
+<li>符号扩展：按符号位扩展。</li>
+</ul>
+<p style="margin:0 0 16px">例如八位模式：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">11111110
+</code></pre>
+<p style="margin:0 0 16px">按八位无符号解释为254；按当前常见八位补码有符号解释为−2。</p>
+<p style="margin:0 0 16px">扩展方式不同，最终宽整数的值不同。</p>
+<p style="margin:0 0 16px">逆向时可关注：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">movzx   ; 零扩展
+movsx   ; 符号扩展
+</code></pre>
+<p style="margin:0 0 16px">但仍要结合源操作数宽度和上下文判断原始类型。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.6 移位规则</h3>
+<p style="margin:0 0 16px">对于：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">x &lt;&lt; k
+x &gt;&gt; k
+</code></pre>
+<p style="margin:0 0 16px">至少检查：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x</code> 提升后的类型和位宽；</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">k</code> 是否为负；</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">k</code> 是否小于该位宽；</li>
+<li>左操作数是否为负；</li>
+<li>左移是否符合可表示性要求。</li>
+</ol>
+<p style="margin:0 0 16px">C17 中：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>移位次数为负，或不小于提升后左操作数的位宽：未定义行为。</li>
+<li>负有符号数左移：未定义行为。</li>
+<li>非负有符号数右移：相当于除以相应的二次幂并取整数部分。</li>
+<li>负有符号数右移：结果具有实现定义性质。</li>
+<li>无符号类型更适合表达明确的位操作。</li>
+</ul>
+<p style="margin:0 0 16px"><strong>机器指令对移位次数的处理规则，不等于 C 语言允许任意移位次数。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">3.7 未定义行为与崩溃</h3>
+<p style="margin:0 0 16px">未定义行为不等于“一定报错”。</p>
+<p style="margin:0 0 16px">例如：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>有符号溢出；</li>
+<li>越界访问；</li>
+<li>使用生命周期已结束的对象；</li>
+<li>修改字符串字面量；</li>
+<li>非法移位。</li>
+</ul>
+<p style="margin:0 0 16px">可能表现为：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>暂时得到预期结果；</li>
+<li>输出异常；</li>
+<li>崩溃；</li>
+<li>优化后出现难以直觉解释的行为。</li>
+</ul>
+<p style="margin:0 0 16px">因此：</p>
+<blockquote style="margin:0 0 16px;padding:0 1em;color:inherit;border-left:.25em solid #d1d9e0">
+<p style="margin:0 0 16px"><strong>不崩溃不能证明程序没有越界，也不能证明代码符合 C 规则。</strong></p>
+</blockquote>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">四、从 C 到机器代码：编译、寄存器与指令</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.1 编译过程</h3>
+<p style="margin:0 0 16px">可以粗略分为：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">预处理 → 编译 → 汇编 → 链接
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>预处理</strong>：处理头文件包含、宏与条件编译。</li>
+<li><strong>编译</strong>：进行语义分析、优化和代码生成。</li>
+<li><strong>汇编</strong>：生成目标文件中的机器代码及相关信息。</li>
+<li><strong>链接</strong>：组合目标文件、处理符号引用，形成最终程序或库。</li>
+</ul>
+<p style="margin:0 0 16px">历史样本使用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">gcc -std=c17 -Wall -Wextra -g -O0 check.c -o check
+</code></pre>
+<p style="margin:0 0 16px">参数含义：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">参数</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-std=c17</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">指定 C17 语言模式</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-Wall -Wextra</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">开启常用警告</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-g</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">生成调试信息</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-O0</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">不启用常规优化，便于入门调试</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-o check</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">指定输出名称</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-g</code> 不等于把原始源码文本完整放进程序；调试信息可包含源码文件名、行号、类型和变量位置等信息。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-O0</code> 也不保证一行 C 对应一条指令。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.2 寄存器宽度</h3>
+<p style="margin:0 0 16px">以 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code> 为例：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">名称</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">访问宽度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">64位</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">eax</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">32位</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ax</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">16位</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">al</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">低8位</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">x86-64 中：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov eax, 1
+</code></pre>
+<p style="margin:0 0 16px">会将 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code> 的高32位清零。</p>
+<p style="margin:0 0 16px">而：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov al, 1
+</code></pre>
+<p style="margin:0 0 16px">只更新低8位。</p>
+<p style="margin:0 0 16px">这会影响“某个寄存器现在是否完整代表一个零或一”的判断。</p>
+<p style="margin:0 0 16px">常见布尔转换：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">sete  al
+movzx eax, al
+</code></pre>
+<p style="margin:0 0 16px">第一条只设置 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">al</code>，第二条将其零扩展为完整的32位结果。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.3 内存操作数</h3>
+<p style="margin:0 0 16px">Intel 语法中：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov eax, DWORD PTR [rbp-0x34]
+</code></pre>
+<p style="margin:0 0 16px">含义是从计算出的地址读取四字节数据，放进 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">eax</code>。</p>
+<p style="margin:0 0 16px">常见宽度：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">标记</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600" style="text-align:right">大小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">BYTE PTR</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">1字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">WORD PTR</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">2字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">DWORD PTR</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">4字节</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">QWORD PTR</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0" style="text-align:right">8字节</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">一般有效地址可包含：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">基址 + 索引 × 比例 + 位移
+</code></pre>
+<p style="margin:0 0 16px">比例通常可为1、2、4、8。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov eax, DWORD PTR [rdi+rcx*4]
+</code></pre>
+<p style="margin:0 0 16px">若 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rdi</code> 指向 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code> 数组开头，可能是在读取第 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rcx</code> 个元素。但“可能”还需由数据流支持，不能只看形式就断言类型。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.4 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">mov</code> 与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">lea</code></h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov rax, QWORD PTR [rbp-0x30]
+</code></pre>
+<p style="margin:0 0 16px">读取内存内容。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">lea rax, [rbp-0x30]
+</code></pre>
+<p style="margin:0 0 16px">计算地址，不读取该地址的内容。</p>
+<p style="margin:0 0 16px">后者常对应：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">&amp;local
+</code></pre>
+<p style="margin:0 0 16px">或数组首地址。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">lea</code> 还可用于整数计算：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">lea eax, [rdi+rdi*4]
+</code></pre>
+<p style="margin:0 0 16px">得到五倍的低32位结果。</p>
+<p style="margin:0 0 16px"><strong><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">lea</code> 不访问方括号所表示的内存，也不像普通算术指令那样更新算术标志位。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.5 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">cmp</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">test</code> 与标志位</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">cmp eax, 0
+</code></pre>
+<p style="margin:0 0 16px">按减法结果设置标志位，但不保存减法结果。</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">test eax, eax
+</code></pre>
+<p style="margin:0 0 16px">按位与后设置标志位，也不保存结果，常用于检查是否为零。</p>
+<p style="margin:0 0 16px">常见标志位：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>ZF</strong>：结果是否为零。</li>
+<li><strong>SF</strong>：结果最高位。</li>
+<li><strong>CF</strong>：无符号进位或借位相关。</li>
+<li><strong>OF</strong>：有符号溢出相关。</li>
+</ul>
+<p style="margin:0 0 16px">不是所有指令都以相同方式修改这些标志位。读分支时，要找到<strong>真正产生该分支所依赖标志位的指令</strong>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.6 有符号与无符号跳转</h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">关系</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">有符号</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">无符号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">小于</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jl</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jb</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">小于等于</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jle</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jbe</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">大于</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jg</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ja</code></td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">大于等于</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jge</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jae</code></td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">相等比较常见：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">je / jz
+jne / jnz
+</code></pre>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">je</code> 与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">jz</code> 是同一个条件的不同名字。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">cmp edi, 10
+ja  reject
+</code></pre>
+<p style="margin:0 0 16px">表达无符号“大于10”。</p>
+<p style="margin:0 0 16px">如果 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">edi</code> 的位模式为 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0xffffffff</code>，按无符号解释是很大的正数，因此会跳转。不能按有符号的−1来解释 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ja</code>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">4.7 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">setcc</code>：把条件变成数值</h3>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">cmp eax, 0
+sete al
+movzx eax, al
+</code></pre>
+<p style="margin:0 0 16px">含义：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>比较原来的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">eax</code> 与零；</li>
+<li>相等则 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">al=1</code>，不相等则 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">al=0</code>；</li>
+<li>将该字节零扩展为整数。</li>
+</ol>
+<p style="margin:0 0 16px">这常对应：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">return value == 0;
+</code></pre>
+<p style="margin:0 0 16px">条件既可以控制跳转，也可以被转换为零或一的数据结果。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">五、函数调用、栈帧与返回值</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.1 Linux x86-64 System V 参数约定</h3>
+<p style="margin:0 0 16px">常见整数或指针参数依次使用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">rdi、rsi、rdx、rcx、r8、r9
+</code></pre>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">strcmp(input, &quot;cat&quot;);
+</code></pre>
+<p style="margin:0 0 16px">调用前重点看：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">rdi → input
+rsi → &quot;cat&quot;
+</code></pre>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">fgets(input, 32, stdin);
+</code></pre>
+<p style="margin:0 0 16px">调用前重点看：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">rdi → 缓冲区
+esi → 容量32
+rdx → 输入流
+</code></pre>
+<p style="margin:0 0 16px">这只是常见整数／指针参数的入门规则。浮点参数、聚合类型和更多参数还涉及其他规则。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.2 返回值与寄存器宽度</h3>
+<p style="margin:0 0 16px">常见整数或指针返回值使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code> 或其低位部分：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>返回 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>：通常关注 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">eax</code>。</li>
+<li>返回普通指针：通常关注 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code>。</li>
+</ul>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code> 返回 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>。历史调试用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">print /d $eax
+</code></pre>
+<p style="margin:0 0 16px">观察它的有符号十进制返回值。</p>
+<p style="margin:0 0 16px">不能直接把整个 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code> 按64位有符号数读取，就假定得到相同解释；对于 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code> 返回值，上半部分不是判断其符号的依据。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.3 调用者保存与被调用者保存</h3>
+<p style="margin:0 0 16px">System V 下，常见被调用者保存寄存器包括：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">rbx、rbp、r12、r13、r14、r15
+</code></pre>
+<p style="margin:0 0 16px">若函数使用并改变它们，需要在返回前恢复约定要求的值。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rax</code>、参数寄存器等通常属于调用者需要考虑保全的寄存器。</p>
+<p style="margin:0 0 16px">因此：</p>
+<blockquote style="margin:0 0 16px;padding:0 1em;color:inherit;border-left:.25em solid #d1d9e0">
+<p style="margin:0 0 16px"><strong>调用一个函数后，不能假定调用前的参数寄存器仍保持原值。</strong></p>
+</blockquote>
+<p style="margin:0 0 16px">逆向跟踪数据时，跨越 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call</code> 要检查数据究竟保存在寄存器、栈槽还是其他对象中。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.4 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call</code> 与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ret</code></h3>
+<p style="margin:0 0 16px">对于普通近调用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">call target
+</code></pre>
+<p style="margin:0 0 16px">主要做两件事：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>保存返回地址，即调用指令之后的位置；</li>
+<li>转到目标函数。</li>
+</ol>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">ret
+</code></pre>
+<p style="margin:0 0 16px">从栈中取得返回地址并转回。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call</code> 不负责自动保存所有寄存器，也不负责自动给所有参数安排存储空间。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.5 典型栈帧</h3>
+<p style="margin:0 0 16px">未优化代码常见：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">push rbp
+mov  rbp, rsp
+sub  rsp, 0x40
+</code></pre>
+<p style="margin:0 0 16px">可以理解为：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>保存旧 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rbp</code>；</li>
+<li>让 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rbp</code> 成为当前帧的参考位置；</li>
+<li>下调 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rsp</code>，预留局部存储等空间。</li>
+</ol>
+<p style="margin:0 0 16px">在这种特定栈帧形式下，常见关系是：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">[rbp+8]  返回地址
+[rbp]    保存的旧 rbp
+[rbp-…]  局部存储
+</code></pre>
+<p style="margin:0 0 16px">不能把这个布局推广到所有函数：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>优化后可能省略帧指针；</li>
+<li>叶函数可能不建立类似栈帧；</li>
+<li>局部变量可能在寄存器中；</li>
+<li>预留空间还包含对齐和临时数据。</li>
+</ul>
+<p style="margin:0 0 16px">尾部：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">leave
+ret
+</code></pre>
+<p style="margin:0 0 16px">常用于撤销该类栈帧并返回。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.6 栈对齐</h3>
+<p style="margin:0 0 16px">普通 System V x86-64 调用中，调用者通常使栈在执行 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call</code> 前满足16字节对齐。</p>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call</code> 再压入八字节返回地址，因此函数入口处通常满足：</p>
+<p style="margin:0 0 16px">$$
+(\mathrm{rsp}+8)\bmod 16=0
+$$</p>
+<p style="margin:0 0 16px">分析栈空间时，对齐填充也是原因之一，不能把所有预留字节都认定为用户数组。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.7 函数调用不等于系统调用</h3>
+<p style="margin:0 0 16px">Linux x86-64 系统调用通常使用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">系统调用号：rax
+参数：rdi、rsi、rdx、r10、r8、r9
+</code></pre>
+<p style="margin:0 0 16px">第4个参数是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">r10</code>，而普通函数调用的第4个常见整数参数是 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rcx</code>。</p>
+<p style="margin:0 0 16px">调用 libc 函数：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">puts(&quot;hello&quot;);
+</code></pre>
+<p style="margin:0 0 16px">不等于程序直接执行一个同名系统调用。库函数可能先处理缓冲等逻辑，再间接使用系统调用。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">5.8 本部分的分析原则</h3>
+<p style="margin:0 0 16px">阅读二进制时，按以下顺序建立结论：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">指令宽度
+→ 数据来源
+→ 扩展或截断方式
+→ 运算与标志位
+→ 参数位置
+→ 返回值
+→ 保存与后续分支
+</code></pre>
+<p style="margin:0 0 16px">避免几个常见跳步：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>看见四字节就断定为有符号 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">int</code>；</li>
+<li>看见方括号就断定一定访存；</li>
+<li>看见 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">cmp</code> 就不区分有符号与无符号跳转；</li>
+<li>看见函数返回就认为调用者变量已经保存；</li>
+<li>看见程序没有崩溃就认定访问合法。</li>
+</ul>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">六、ELF、文件偏移与运行时地址</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">6.1 ELF 文件的基本结构</h3>
+<p style="margin:0 0 16px">ELF 是 Linux 等系统使用的可执行与链接格式。它不只用于可执行程序，也用于：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>可重定位目标文件，例如 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.o</code>；</li>
+<li>共享库，例如 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.so</code>；</li>
+<li>某些核心转储文件。</li>
+</ul>
+<p style="margin:0 0 16px">分析 ELF 时，首先关注：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">属性</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">要回答的问题</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">位宽</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ELF32 还是 ELF64？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">端序</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">多字节整数按小端还是大端解释？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">机器类型</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">x86-64、ARM，还是其他架构？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文件类型</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">目标文件、可执行文件还是共享对象？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">入口地址</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">装载后从哪里开始执行？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">程序头</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">运行时如何建立映射？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">节头</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">文件中各类代码与数据如何组织？</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">历史回顾命令：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">file ./check
+readelf -hW ./check
+readelf -lW ./check
+readelf -SW ./check
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-h</code>：查看 ELF 头。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-l</code>：查看程序头。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-S</code>：查看节头。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">-W</code>：使用宽输出，减少折行。</li>
+</ul>
+<p style="margin:0 0 16px"><strong>工具识别结果是分析起点，不等于已经理解程序行为。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">6.2 节与段不是同一件事</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">节：偏向链接与文件组织</h4>
+<p style="margin:0 0 16px">常见节：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">节</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">常见内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.text</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">机器指令</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.rodata</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">只读常量、字符串</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.data</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">有初始值的可写数据</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.bss</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">需要零初始化但通常不在文件中逐字节保存的空间</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.symtab</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">符号表</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.dynsym</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">动态链接使用的符号</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.rela.*</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">重定位信息</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">不能认为所有字符串一定在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.rodata</code>，也不能认为所有代码只能出现在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.text</code>。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">段：偏向运行时装载</h4>
+<p style="margin:0 0 16px">程序头描述装载需要的信息，其中 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">PT_LOAD</code> 段决定哪些范围映射进内存，以及读、写、执行权限等属性。</p>
+<p style="margin:0 0 16px">一个段可以覆盖多个节。</p>
+<p style="margin:0 0 16px">因此：</p>
+<blockquote style="margin:0 0 16px;padding:0 1em;color:inherit;border-left:.25em solid #d1d9e0">
+<p style="margin:0 0 16px"><strong>节回答“文件如何组织”，段回答“运行时如何装载”。</strong></p>
+</blockquote>
+<p style="margin:0 0 16px">运行程序并不要求装载器依靠所有节头逐节加载。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">6.3 三种地址坐标</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">文件偏移</h4>
+<p style="margin:0 0 16px">从文件开头计数的位置。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">文件偏移 0x2004
+</code></pre>
+<p style="margin:0 0 16px">表示文件开头之后的第 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x2004</code> 字节位置。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">ELF 虚拟地址</h4>
+<p style="margin:0 0 16px">ELF 布局中使用的虚拟地址坐标，常出现在反汇编、符号及程序头信息中。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">运行时地址</h4>
+<p style="margin:0 0 16px">程序映射到某个进程后实际使用的地址。</p>
+<p style="margin:0 0 16px">三者可能数值相同，也可能不同。<strong>即使碰巧相同，也不能因此混淆概念。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">6.4 根据 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">LOAD</code> 段换算文件偏移</h3>
+<p style="margin:0 0 16px">假设某个 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">LOAD</code> 段具有：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>文件起点：$p_{\text{offset}}$；</li>
+<li>ELF 虚拟地址起点：$p_{\text{vaddr}}$；</li>
+<li>文件数据大小：$p_{\text{filesz}}$；</li>
+<li>内存占用大小：$p_{\text{memsz}}$。</li>
+</ul>
+<p style="margin:0 0 16px">若目标 ELF 地址为 $V$，且位于该段的文件数据范围内：</p>
+<p style="margin:0 0 16px">$$
+p_{\text{vaddr}}\leq V
+&lt;
+p_{\text{vaddr}}+p_{\text{filesz}}
+$$</p>
+<p style="margin:0 0 16px">则对应文件偏移为：</p>
+<p style="margin:0 0 16px">$$
+F=p_{\text{offset}}+(V-p_{\text{vaddr}})
+$$</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">段的文件起点：0x2000
+段的虚拟地址：0x3000
+目标虚拟地址：0x3120
+</code></pre>
+<p style="margin:0 0 16px">目标距离段起点：</p>
+<p style="margin:0 0 16px">$$
+0x3120-0x3000=0x120
+$$</p>
+<p style="margin:0 0 16px">因此文件偏移：</p>
+<p style="margin:0 0 16px">$$
+0x2000+0x120=0x2120
+$$</p>
+<p style="margin:0 0 16px">若地址只落在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p_memsz</code> 覆盖、但超出 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">p_filesz</code> 的范围，则可能属于零填充内存，<strong>没有对应的原始文件字节</strong>。</p>
+<p style="margin:0 0 16px">这也是为什么不能对 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">.bss</code> 机械套用文件读取。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">6.5 PIE、ASLR 与加载偏移</h3>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>PIE</strong>：位置无关可执行文件的一种构建形式。</li>
+<li><strong>ASLR</strong>：运行时地址布局随机化机制。</li>
+</ul>
+<p style="margin:0 0 16px">PIE 使主程序能够在不同基址装载；ASLR 可以利用这种能力随机化位置。</p>
+<p style="margin:0 0 16px">但：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>PIE 不等于每次运行地址一定不同；</li>
+<li>调试器设置和系统配置会影响随机化；</li>
+<li>非 PIE 程序的共享库、栈等位置也可能随机化。</li>
+</ul>
+<p style="margin:0 0 16px">对普通 PIE 映像，可以通过加载偏移 $B$ 关联：</p>
+<p style="margin:0 0 16px">$$
+R=B+V
+$$</p>
+<p style="margin:0 0 16px">其中：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>$V$：ELF 虚拟地址；</li>
+<li>$R$：运行时地址；</li>
+<li>$B$：该次装载的加载偏移。</li>
+</ul>
+<p style="margin:0 0 16px">这个公式<strong>不是文件偏移直接加基址</strong>。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">七、符号、动态链接、PLT 与 GOT</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">7.1 符号的含义</h3>
+<p style="margin:0 0 16px">符号把名称与某些程序实体关联起来，例如：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>函数；</li>
+<li>全局对象；</li>
+<li>尚需链接解析的外部引用。</li>
+</ul>
+<p style="margin:0 0 16px">保留符号时，工具可能直接显示：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">main
+check
+strcmp
+</code></pre>
+<p style="margin:0 0 16px">去符号后，内部函数可能只显示：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">FUN_001011c9
+</code></pre>
+<p style="margin:0 0 16px">但去符号并不等于所有名称全部消失。动态链接所需的某些导入符号仍可能存在。</p>
+<p style="margin:0 0 16px"><strong>没有函数名，不等于没有函数；有名字，也不等于名字一定可信。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">7.2 外部函数的地址解析</h3>
+<p style="margin:0 0 16px">程序调用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">strcmp(input, &quot;cat&quot;);
+</code></pre>
+<p style="margin:0 0 16px">实际 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code> 位于 libc 中。程序构建时通常不把该共享库的最终运行地址写死。</p>
+<p style="margin:0 0 16px">动态链接过程需要将外部符号与实际地址关联。</p>
+<p style="margin:0 0 16px">一种常见调用路径：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">程序中的调用指令
+        ↓
+PLT 跳板
+        ↓
+读取 GOT 槽中的地址
+        ↓
+跳到实际库函数
+</code></pre>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><strong>PLT</strong>：可执行跳板。</li>
+<li><strong>GOT</strong>：存放地址等数据的表。</li>
+<li><strong>重定位信息</strong>：说明哪些位置需要按什么规则处理。</li>
+</ul>
+<p style="margin:0 0 16px">这是一种常见实现，不能推广为所有外部调用都必须经过同样的 PLT 路径。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">7.3 重定位项中的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">Offset</code></h3>
+<p style="margin:0 0 16px">本例的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">R_X86_64_JUMP_SLOT</code> 项中，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">Offset</code> 表示需要处理的目标虚拟地址。</p>
+<p style="margin:0 0 16px">例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">0x3fd0 → strcmp
+</code></pre>
+<p style="margin:0 0 16px">表示对应地址槽需要与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code> 关联，不是说该项必然位于文件偏移 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x3fd0</code>。</p>
+<p style="margin:0 0 16px">字段含义必须结合 ELF 类型与上下文理解；不能看到英文“偏移”就统一当作文件偏移。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">7.4 惰性绑定与立即绑定</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">惰性绑定</h4>
+<p style="margin:0 0 16px">常见思路是：第一次调用某函数时才解析地址，之后复用解析结果。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">立即绑定</h4>
+<p style="margin:0 0 16px">在启动装载阶段完成相关函数地址解析，不等到首次调用。</p>
+<p style="margin:0 0 16px">本例执行过：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">readelf -dW ./check | grep -E 'BIND_NOW|FLAGS'
+</code></pre>
+<p style="margin:0 0 16px">显示：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">FLAGS    BIND_NOW
+FLAGS_1  NOW PIE
+</code></pre>
+<p style="margin:0 0 16px">说明该程序要求立即绑定，并带有 PIE 标记。</p>
+<p style="margin:0 0 16px">因此：</p>
+<blockquote style="margin:0 0 16px;padding:0 1em;color:inherit;border-left:.25em solid #d1d9e0">
+<p style="margin:0 0 16px"><strong>看到 PLT 或解析跳板仍存在，不足以断定程序采用首次调用才解析。</strong></p>
+</blockquote>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">7.5 立即绑定与 RELRO 不完全相同</h3>
+<p style="margin:0 0 16px">RELRO 与装载后将某些重定位相关区域设为只读有关。</p>
+<p style="margin:0 0 16px">分析通常还要核对：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>是否存在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">GNU_RELRO</code> 段；</li>
+<li>哪些区域被覆盖；</li>
+<li>是否立即绑定；</li>
+<li>实际运行时权限。</li>
+</ul>
+<p style="margin:0 0 16px">常说的完整 RELRO 通常需要结合 RELRO 与立即绑定等条件判断。</p>
+<p style="margin:0 0 16px"><strong>本轮已证明 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">BIND_NOW</code>，不能仅凭这一项宣称已经完整核验 RELRO。</strong></p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">八、GDB：从参数到返回值，再到分支</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.1 先确认调试现场</h3>
+<p style="margin:0 0 16px">历史样本：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">gdb ./check
+</code></pre>
+<p style="margin:0 0 16px">进入后：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">start
+disassemble main
+</code></pre>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">start</code> 通常运行到 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">main</code> 附近并暂停，便于建立现场。</p>
+<p style="margin:0 0 16px">若进程已经退出，读取寄存器可能出现：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">No registers.
+</code></pre>
+<p style="margin:0 0 16px">这通常意味着当前没有可读取的活动进程现场，不代表寄存器永久损坏。</p>
+<p style="margin:0 0 16px">应先确认进程状态，再重新启动或继续正确的调试流程。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.2 三种断点写法</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">按函数名</h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">break check
+</code></pre>
+<p style="margin:0 0 16px">通常停在适合源码调试的位置，不保证就是函数入口第一条机器指令。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">按函数内偏移</h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">break *(main+112)
+</code></pre>
+<p style="margin:0 0 16px">在明确计算出的指令地址设置断点。</p>
+<p style="margin:0 0 16px">这里：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">112 = 0x70
+</code></pre>
+<p style="margin:0 0 16px">不等于 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">0x112</code>。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">按绝对地址</h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">break *0x6168e3b5626e
+</code></pre>
+<p style="margin:0 0 16px">只适合这个地址在当前进程中仍然有效的情况。</p>
+<p style="margin:0 0 16px">重新运行、开启随机化或重新编译，都可能使旧地址失效。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.3 函数调用前的检查要点</h3>
+<p style="margin:0 0 16px">停在 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call check</code> 前：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">x/i $pc
+x/s $rdi
+</code></pre>
+<p style="margin:0 0 16px">含义：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x/i $pc</code>：按指令解释当前程序计数器所指位置。</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x/s $rdi</code>：将 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rdi</code> 指向的内存按终止零字符串显示。</li>
+</ul>
+<p style="margin:0 0 16px">历史截图确认：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">当前指令：call check
+第一个参数：&quot;car&quot;
+</code></pre>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">x/s</code> 不是任意内存的通用查看方式。如果对象是含零字节的二进制数据，应按已知长度查看字节，例如：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">x/16bx $rdi
+</code></pre>
+<p style="margin:0 0 16px">这里表示查看16个字节，以十六进制显示。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.4 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">si</code>、<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ni</code> 与 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">finish</code></h3>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">命令</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">si</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">指令级单步，可以进入被调用函数</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ni</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">指令级跨过调用</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">finish</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">运行到当前函数返回</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">需要研究校验内部的数据变化时，使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">si</code> 进入。</p>
+<p style="margin:0 0 16px">只想知道函数输入和最终输出时，可在调用点检查参数，再用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ni</code> 跨过调用。</p>
+<p style="margin:0 0 16px">注意：跨过调用仍然会真正执行被调用函数；如果它等待输入或阻塞，调试器也要等待。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.5 返回值已经产生，局部变量可能还没保存</h3>
+<p style="margin:0 0 16px">调用附近：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">call check
+mov  DWORD PTR [rbp-0x34], eax
+</code></pre>
+<p style="margin:0 0 16px">当暂停位置指向第二条指令时：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">check</code> 已返回；</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">eax</code> 已有返回值；</li>
+<li>第二条 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">mov</code> 尚未执行；</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ok</code> 对应栈槽尚未由该指令更新。</li>
+</ul>
+<p style="margin:0 0 16px">此时：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">print /d $eax
+</code></pre>
+<p style="margin:0 0 16px">比立即依赖局部变量 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ok</code> 更能直接说明返回值。</p>
+<p style="margin:0 0 16px"><strong>当前显示的指令通常是下一条待执行指令。</strong></p>
+<p style="margin:0 0 16px">源码显示仍停留在：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">int ok = check(input);
+</code></pre>
+<p style="margin:0 0 16px">也不表示 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">check</code> 尚未返回，因为同一行源码包含多条指令。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">8.6 业务结果与退出码</h3>
+<p style="margin:0 0 16px">本例正常读取输入后，不论匹配与否，最后都可以：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">return 0;
+</code></pre>
+<p style="margin:0 0 16px">所以必须分开看：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">值</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">strcmp</code> 返回零</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">两个字符串相等</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">check</code> 返回零</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">校验不通过</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">main</code> 返回零</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">程序按正常路径结束</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">零没有脱离上下文的统一含义。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">九、Ghidra：把反编译结果变成可靠结论</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.1 导入与自动分析</h3>
+<p style="margin:0 0 16px">本轮已经在 Windows Ghidra 中导入 WSL 的 Linux ELF。</p>
+<p style="margin:0 0 16px">导入识别：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">x86:LE:64:default:gcc
+</code></pre>
+<p style="margin:0 0 16px">可以理解为：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>x86 架构；</li>
+<li>小端；</li>
+<li>64位；</li>
+<li>相应默认语言配置；</li>
+<li>GCC 编译器约定配置。</li>
+</ul>
+<p style="margin:0 0 16px">这个选择不是说“仅凭导入选项就证明了编译器版本”，具体编译信息还需其他证据。</p>
+<p style="margin:0 0 16px">Windows 上的静态分析工具可以分析 Linux ELF，不需要先转成 Windows PE。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.2 PIE 文件与共享对象标识</h3>
+<p style="margin:0 0 16px">PIE 可执行文件通常使用 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ET_DYN</code> 类型，与共享对象使用相同的 ELF 类型编号。</p>
+<p style="margin:0 0 16px">因此：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">ELF File Type: shared object
+</code></pre>
+<p style="margin:0 0 16px">不直接意味着文件是普通动态库。</p>
+<p style="margin:0 0 16px">应结合：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>解释器信息；</li>
+<li>入口；</li>
+<li>动态标志；</li>
+<li>程序结构；</li>
+</ul>
+<p style="margin:0 0 16px">共同判断。</p>
+<p style="margin:0 0 16px">本例还有已有的 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">PIE</code> 标志作为补充证据。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.3 常见导入提示</h3>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">stdin</code> 的复制重定位</h4>
+<p style="margin:0 0 16px">摘要中出现：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">R_X86_64_COPY
+Runtime copy not supported
+</code></pre>
+<p style="margin:0 0 16px">说明静态加载过程没有模拟这项运行时复制操作。</p>
+<p style="margin:0 0 16px">不能据此断言：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">stdin</code> 在真实运行时一定无效；</li>
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">fgets</code> 一定失败；</li>
+<li>程序无法执行。</li>
+</ul>
+<p style="margin:0 0 16px">此前 GDB 中已经成功读取输入，证明不能把导入提示等同运行故障。</p>
+<h4 style="font-size:1em;margin:20px 0 12px;font-weight:600">libc 不在项目中</h4>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">libc.so.6 -&gt; not found in project
+</code></pre>
+<p style="margin:0 0 16px">表示 Ghidra 项目没有额外导入该库的完整程序对象。</p>
+<p style="margin:0 0 16px">仍然可以利用外部符号分析：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">puts
+fgets
+strcmp
+</code></pre>
+<p style="margin:0 0 16px">不必为当前小样本导入整套 libc。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.4 反编译不是恢复原始源码</h3>
+<p style="margin:0 0 16px">反编译器根据指令、控制流、类型推断和已有符号，生成一种高级表示。</p>
+<p style="margin:0 0 16px">可能出现：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">iVar1</code> 等自动变量名；</li>
+<li>类型不完全准确；</li>
+<li>多余声明；</li>
+<li>不同的分支顺序；</li>
+<li>强制转换；</li>
+<li>多个原始变量合并；</li>
+<li>一个原始变量拆成多个临时值。</li>
+</ul>
+<p style="margin:0 0 16px">正确目标是<strong>恢复等价行为与约束</strong>，不是逐字复原源文件。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.5 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">main</code> 的业务流程</h3>
+<p style="margin:0 0 16px">结合已知样本，可归纳为：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">char input[32];
+
+<p>puts(&quot;请输入口令：&quot;);</p>
+<p>if (fgets(input, sizeof input, stdin) &#x3D;&#x3D; NULL) {<br>    return 1;<br>}</p>
+<p>input[strcspn(input, &quot;\n&quot;)] &#x3D; ‘\0’;</p>
+<p>int ok &#x3D; check(input);</p>
+<p>if (ok !&#x3D; 0) {<br>    puts(&quot;匹配&quot;);<br>}<br>else {<br>    puts(&quot;不匹配&quot;);<br>}</p>
+<p>return 0;<br></code></pre></p>
+<p style="margin:0 0 16px">这是便于理解的业务归纳，省略了编译器加入的栈保护等细节，不应当作反编译器逐字输出。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.6 分支交换不等于逻辑改变</h3>
+<p style="margin:0 0 16px">源码：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">if (ok) {
+    puts(&quot;匹配&quot;);
+}
+else {
+    puts(&quot;不匹配&quot;);
+}
+</code></pre>
+<p style="margin:0 0 16px">伪代码：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">if (value == 0) {
+    puts(&quot;不匹配&quot;);
+}
+else {
+    puts(&quot;匹配&quot;);
+}
+</code></pre>
+<p style="margin:0 0 16px">条件取反且分支交换后，行为仍然相同。</p>
+<p style="margin:0 0 16px">本例汇编：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">cmp ..., 0
+jz  不匹配路径
+</code></pre>
+<p style="margin:0 0 16px">说明零走不匹配。</p>
+<p style="margin:0 0 16px">分析分支必须核对：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>比较的真实值；</li>
+<li>跳转条件；</li>
+<li>目标基本块；</li>
+<li>每条路径的输出或返回值。</li>
+</ol>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.7 变量重命名与语义判断</h3>
+<p style="margin:0 0 16px">截图里它先后承担：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">iVar2 = 1;             // 输入失败的退出状态
+iVar2 = check(input);  // 校验返回值
+iVar2 = 0;             // 正常退出状态
+return iVar2;
+</code></pre>
+<p style="margin:0 0 16px">全局重命名成 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ok</code> 会误导最后的返回含义。</p>
+<p style="margin:0 0 16px">重命名原则：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>先看变量的全部定义和使用；</li>
+<li>名称应描述整个生命周期中合理的角色；</li>
+<li>不确定时保留中性名称并添加注释；</li>
+<li>不为了“像源码”而强行命名。</li>
+</ul>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.8 字符串、交叉引用与调用关系</h3>
+<p style="margin:0 0 16px">推荐路径：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">成功/失败字符串
+      ↓
+使用它的指令
+      ↓
+输入输出函数
+      ↓
+校验函数
+      ↓
+参数、返回值与条件
+</code></pre>
+<p style="margin:0 0 16px">交叉引用表示某个地址被引用，但不自动证明该路径会执行。</p>
+<p style="margin:0 0 16px">还需检查：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>引用是代码还是数据；</li>
+<li>数据是否真的被作为字符串使用；</li>
+<li>所在函数是否可达；</li>
+<li>是否只是无关提示或诱饵。</li>
+</ul>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">DAT_00102004</code> 只是自动数据标签，不是错误标记。</p>
+<p style="margin:0 0 16px">本例中它对应 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">&quot;cat&quot;</code>，可靠结论来自字符串内容、地址引用和传参数据流共同支持。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">9.9 保存项目与修改程序</h3>
+<p style="margin:0 0 16px">Ghidra 项目中的：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>函数命名；</li>
+<li>变量命名；</li>
+<li>注释；</li>
+<li>类型标注；</li>
+</ul>
+<p style="margin:0 0 16px">通常属于分析数据库内容。</p>
+<p style="margin:0 0 16px">保存这些分析信息，不等于直接改写原始 ELF。</p>
+<p style="margin:0 0 16px">指令修改、导出修改后的程序，则是另一类操作，必须单独确认。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">十、编译器插入的保护代码与业务代码</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">10.1 栈金丝雀</h3>
+<p style="margin:0 0 16px">本例出现：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">mov rax, QWORD PTR fs:0x28
+</code></pre>
+<p style="margin:0 0 16px">以及函数尾部的保护值比较和：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">__stack_chk_fail();
+</code></pre>
+<p style="margin:0 0 16px">在当前环境中，这些与栈保护有关。</p>
+<p style="margin:0 0 16px">基本思路：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>进入函数时保存保护值；</li>
+<li>返回前检查它是否变化；</li>
+<li>不一致则进入失败处理。</li>
+</ol>
+<p style="margin:0 0 16px">它不是口令算法。</p>
+<p style="margin:0 0 16px">不能因此推断：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>所有函数都受保护；</li>
+<li>所有越界都会被发现；</li>
+<li>有金丝雀就不存在信息泄露；</li>
+<li>堆错误也会被它统一拦截。</li>
+</ul>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">10.2 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">in_FS_OFFSET</code> 与线程局部存储</h3>
+<p style="margin:0 0 16px">反编译器可能用：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">in_FS_OFFSET
+</code></pre>
+<p style="margin:0 0 16px">表达对 FS 相关存储的访问。</p>
+<p style="margin:0 0 16px">不能把它理解为源码中必然声明的普通业务变量。</p>
+<p style="margin:0 0 16px">同样，反编译出的保护值读取、比较和失败调用，应从口令业务逻辑中分离出来理解。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">10.3 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">endbr64</code></h3>
+<p style="margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">endbr64</code> 与间接分支跟踪相关。</p>
+<p style="margin:0 0 16px">看到该指令，只能说明程序包含相应入口指令。</p>
+<p style="margin:0 0 16px">是否在当前运行时真正执行完整的相关保护，还取决于硬件、系统和启用状态。不能仅凭一条指令就登记为“运行时保护已全面核验”。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">十一、陌生 ELF 的独立分析方法</h2>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">11.1 不依赖函数名的入口</h3>
+<p style="margin:0 0 16px">去符号后，不一定有 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">main</code> 或 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">check</code>。</p>
+<p style="margin:0 0 16px">可从以下线索开始：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>输入函数；</li>
+<li>成功或失败输出；</li>
+<li>字符串引用；</li>
+<li>导入函数；</li>
+<li>入口与初始化流程；</li>
+<li>关键常量与循环。</li>
+</ul>
+<p style="margin:0 0 16px">函数名只是线索之一，不是唯一入口。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">11.2 从输入建立数据流</h3>
+<p style="margin:0 0 16px">要回答：</p>
+<ol style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>输入来自哪里？</li>
+<li>缓冲区在哪里？</li>
+<li>最大读取多少？</li>
+<li>是否去换行或进行其他预处理？</li>
+<li>传入哪个函数？</li>
+<li>校验函数是否还读取全局数据？</li>
+</ol>
+<p style="margin:0 0 16px">不要默认“输入函数读到的内容”与“校验函数看到的内容”完全相同。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">11.3 恢复循环与字节运算</h3>
+<p style="margin:0 0 16px">后续更复杂样本常需要整理：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">项目</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">记录内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">长度</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">精确相等、上限还是下限？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">下标</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">从哪里开始，在哪里结束？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">元素宽度</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">一字节、四字节还是其他？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">扩展方式</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">零扩展还是符号扩展？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">变换</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">加减、异或、移位、查表或重排？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">比较</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">比较每个字节还是整体结果？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">失败条件</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">哪一步直接退出？</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">成功条件</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">是否必须完成全部检查？</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px"><strong>还原顺序与变换顺序通常相反，但要先判断变换是否可逆。</strong></p>
+<p style="margin:0 0 16px">例如丢弃高位、掩码或查表可能造成信息丢失，不能见到运算就假设存在唯一逆运算。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">11.4 正向验证与唯一性</h3>
+<p style="margin:0 0 16px">得到候选输入后，必须重新代入全部条件。</p>
+<p style="margin:0 0 16px">需要区分：</p>
+<ul style="padding-left:2em;margin-top:0;margin-bottom:16px">
+<li>找到一个通过输入；</li>
+<li>找到所有通过输入；</li>
+<li>证明通过输入唯一。</li>
+</ul>
+<p style="margin:0 0 16px">程序输出一次 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">PASS</code>，只能证明该输入在那次运行中通过，不自动证明唯一。</p>
+<hr style="height:2px;padding:0;margin:24px 0;background-color:#d1d9e0;border:0" />
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/">https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9F%BA%E7%A1%80/">基础</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">9</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">C，汇编</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">一、C 类型、对象与字节</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 C 对象的含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2 C 字节与 CHAR_BIT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3 常见类型大小与平台差异</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4 sizeof 的含义与用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.5.</span> <span class="toc-text">1.5 固定宽度整数类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">二、数组、指针、字符串与生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1 数组不是指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2 地址与解引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3 指针运算以元素大小为单位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4 字符串长度、容量与终止零</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.5.</span> <span class="toc-text">2.5 数组参数与容量信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.6.</span> <span class="toc-text">2.6 fgets 与输入边界</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.7.</span> <span class="toc-text">2.7 strcmp 与 memcmp</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.2.7.1.</span> <span class="toc-text">strcmp</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.2.7.2.</span> <span class="toc-text">memcmp</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.8.</span> <span class="toc-text">2.8 内存复制不自动处理字符串语义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.9.</span> <span class="toc-text">2.9 生命周期与悬空指针</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.10.</span> <span class="toc-text">2.10 常见存储区域与限制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">三、C 整数运算与类型转换规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1 整数提升</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2 有符号与无符号混合比较</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3 无符号回绕</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.4.</span> <span class="toc-text">3.4 有符号溢出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.5.</span> <span class="toc-text">3.5 窄化转换与符号扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.3.5.1.</span> <span class="toc-text">转为无符号窄类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.3.5.2.</span> <span class="toc-text">转为有符号类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.3.5.3.</span> <span class="toc-text">扩展到更宽类型</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.6.</span> <span class="toc-text">3.6 移位规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.7.</span> <span class="toc-text">3.7 未定义行为与崩溃</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">四、从 C 到机器代码：编译、寄存器与指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1 编译过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2 寄存器宽度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3 内存操作数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4 mov 与 lea</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.5.</span> <span class="toc-text">4.5 cmp、test 与标志位</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.6.</span> <span class="toc-text">4.6 有符号与无符号跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.7.</span> <span class="toc-text">4.7 setcc：把条件变成数值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.5.</span> <span class="toc-text">五、函数调用、栈帧与返回值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.1.</span> <span class="toc-text">5.1 Linux x86-64 System V 参数约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.2.</span> <span class="toc-text">5.2 返回值与寄存器宽度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.3.</span> <span class="toc-text">5.3 调用者保存与被调用者保存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.4.</span> <span class="toc-text">5.4 call 与 ret</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.5.</span> <span class="toc-text">5.5 典型栈帧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.6.</span> <span class="toc-text">5.6 栈对齐</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.7.</span> <span class="toc-text">5.7 函数调用不等于系统调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.8.</span> <span class="toc-text">5.8 本部分的分析原则</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.6.</span> <span class="toc-text">六、ELF、文件偏移与运行时地址</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.1.</span> <span class="toc-text">6.1 ELF 文件的基本结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.2.</span> <span class="toc-text">6.2 节与段不是同一件事</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">节：偏向链接与文件组织</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">段：偏向运行时装载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.3.</span> <span class="toc-text">6.3 三种地址坐标</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.6.3.1.</span> <span class="toc-text">文件偏移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.6.3.2.</span> <span class="toc-text">ELF 虚拟地址</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.6.3.3.</span> <span class="toc-text">运行时地址</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.4.</span> <span class="toc-text">6.4 根据 LOAD 段换算文件偏移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.5.</span> <span class="toc-text">6.5 PIE、ASLR 与加载偏移</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.7.</span> <span class="toc-text">七、符号、动态链接、PLT 与 GOT</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.1.</span> <span class="toc-text">7.1 符号的含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.2.</span> <span class="toc-text">7.2 外部函数的地址解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.3.</span> <span class="toc-text">7.3 重定位项中的 Offset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.4.</span> <span class="toc-text">7.4 惰性绑定与立即绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.7.4.1.</span> <span class="toc-text">惰性绑定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.7.4.2.</span> <span class="toc-text">立即绑定</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.5.</span> <span class="toc-text">7.5 立即绑定与 RELRO 不完全相同</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.8.</span> <span class="toc-text">八、GDB：从参数到返回值，再到分支</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.1.</span> <span class="toc-text">8.1 先确认调试现场</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.2.</span> <span class="toc-text">8.2 三种断点写法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.8.2.1.</span> <span class="toc-text">按函数名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.8.2.2.</span> <span class="toc-text">按函数内偏移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.8.2.3.</span> <span class="toc-text">按绝对地址</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.3.</span> <span class="toc-text">8.3 函数调用前的检查要点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.4.</span> <span class="toc-text">8.4 si、ni 与 finish</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.5.</span> <span class="toc-text">8.5 返回值已经产生，局部变量可能还没保存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.8.6.</span> <span class="toc-text">8.6 业务结果与退出码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.9.</span> <span class="toc-text">九、Ghidra：把反编译结果变成可靠结论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.1.</span> <span class="toc-text">9.1 导入与自动分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.2.</span> <span class="toc-text">9.2 PIE 文件与共享对象标识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.3.</span> <span class="toc-text">9.3 常见导入提示</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.9.3.1.</span> <span class="toc-text">stdin 的复制重定位</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.9.3.2.</span> <span class="toc-text">libc 不在项目中</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.4.</span> <span class="toc-text">9.4 反编译不是恢复原始源码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.5.</span> <span class="toc-text">9.5 main 的业务流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.6.</span> <span class="toc-text">9.6 分支交换不等于逻辑改变</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.7.</span> <span class="toc-text">9.7 变量重命名与语义判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.8.</span> <span class="toc-text">9.8 字符串、交叉引用与调用关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.9.9.</span> <span class="toc-text">9.9 保存项目与修改程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.10.</span> <span class="toc-text">十、编译器插入的保护代码与业务代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.10.1.</span> <span class="toc-text">10.1 栈金丝雀</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.10.2.</span> <span class="toc-text">10.2 in_FS_OFFSET 与线程局部存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.10.3.</span> <span class="toc-text">10.3 endbr64</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.11.</span> <span class="toc-text">十一、陌生 ELF 的独立分析方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.11.1.</span> <span class="toc-text">11.1 不依赖函数名的入口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.11.2.</span> <span class="toc-text">11.2 从输入建立数据流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.11.3.</span> <span class="toc-text">11.3 恢复循环与字节运算</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.11.4.</span> <span class="toc-text">11.4 正向验证与唯一性</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/08/Pwn%E5%B7%A5%E5%85%B7%E4%B8%8E%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/" title="Pwn工具与保护机制">Pwn工具与保护机制</a><time datetime="2026-11-07T17:40:31.631Z" title="发表于 2026-11-08 01:40:31">2026-11-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/" title="ctf基础：C，汇编">ctf基础：C，汇编</a><time datetime="2026-11-07T04:45:29.071Z" title="发表于 2026-11-07 12:45:29">2026-11-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/01/%E5%91%A8%E6%8A%A5week2/" title="周报week2">周报week2</a><time datetime="2026-11-01T06:08:56.862Z" title="发表于 2026-11-01 14:08:56">2026-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/" title="ctf基础：数制，文本，编码，加密">ctf基础：数制，文本，编码，加密</a><time datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%96%87%E4%BB%B6%E8%AF%86%E5%88%AB%EF%BC%8C%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB/" title="ctf基础：文件识别，文件偏移">ctf基础：文件识别，文件偏移</a><time datetime="2026-10-31T05:24:46.711Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
