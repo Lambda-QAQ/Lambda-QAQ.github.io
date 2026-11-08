@@ -1,0 +1,435 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>周报week3 | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第三周">
+<meta property="og:type" content="article">
+<meta property="og:title" content="周报week3">
+<meta property="og:url" content="https://lambda.monster/2026/11/08/%E5%91%A8%E6%8A%A5week3/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="第三周">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-11-08T05:23:10.867Z">
+<meta property="article:modified_time" content="2026-11-08T05:22:40.234Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="周报">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "周报week3",
+  "url": "https://lambda.monster/2026/11/08/%E5%91%A8%E6%8A%A5week3/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-11-08T05:23:10.867Z",
+  "dateModified": "2026-11-08T05:22:40.234Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/11/08/%E5%91%A8%E6%8A%A5week3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '周报week3',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">周报week3</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">周报week3</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-11-08T05:23:10.867Z" title="发表于 2026-11-08 13:23:10">2026-11-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-11-08T05:22:40.234Z" title="更新于 2026-11-08 13:22:40">2026-11-08</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1>学了什么：</h1>
+<p><b>C，汇编：</b><a href="https://lambda.monster/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/">ctf基础：C，汇编</a></p>
+<p><i>C对象与类型：</i></p>
+<p>C里的对象可以理解为存放值的一块存储区域，变量、数组、数组元素都可以是对象；分析时要看类型、大小、地址、存在时间和访问边界，不能只看见4字节就认定是int；</p>
+<p><i>字节与类型大小：</i></p>
+<p>C规定sizeof(char)为1，但一个C字节有多少位由CHAR_BIT决定，当前环境通常是8位；Linux x86-64里int通常4字节，long和普通指针通常8字节，Windows x64的long通常4字节，64位系统不代表所有类型都是8字节；</p>
+<p><i>sizeof与固定宽度类型：</i></p>
+<p>sizeof看占多少字节，真实数组得到整个数组大小，指针得到指针自己的大小，不是它指向的数据大小；uint8_t、int32_t等用来明确位数，但小整数参与运算时仍可能先变成int；</p>
+<p><i>数组与指针：</i></p>
+<p>数组是一组连续元素，指针是保存地址的变量，两者不同；数组名在很多表达式里会转成首元素地址，所以用起来相似，但sizeof结果不同，数组也不能像指针变量一样重新指向别处；</p>
+<p><i>取地址与解引用：</i></p>
+<p>&amp;value取得value的地址，p保存地址，*p访问该地址指向的对象；指针必须指向仍有效、类型和边界都合适的对象，不是有个地址就能随便读写；</p>
+<p><i>指针运算：</i></p>
+<p>指针加1是前进一个元素，不一定是1字节，int指针在当前环境里通常前进4字节；p[i]等于*(p+i)；可以形成数组末尾后一个位置的指针，但不能读取那里；</p>
+<p><i>字符串长度与容量：</i></p>
+<p>char text[8]="cat"的容量是8字节，strlen得到长度3，实际至少需要4字节，因为末尾还要放终止零；sizeof看容量，strlen从开头找第一个终止零，不会自动检查是否越界；</p>
+<p><i>终止零、字符零与换行：</i></p>
+<p>'\0'是值为0的字符，用来结束字符串，'0'是文字里的数字零，当前编码下字节为30，'\n'是换行，当前环境字节为0A，这里字节值按十六进制写；</p>
+<p><i>数组参数：</i></p>
+<p>函数参数写char buf[32]时，实际会调整为指针参数，函数里的sizeof(buf)得到指针大小；传入地址不等于同时传入容量，通常要另传一个长度或容量参数；</p>
+<p><i>fgets读取输入：</i></p>
+<p>给fgets传32字节缓冲区和容量32，成功时最多读31个字节，再补终止零；读到换行且放得下时会保留换行；输入太长可能只读一部分，没越界不代表已经读完整条输入；</p>
+<p><i>去掉换行：</i></p>
+<p>input[strcspn(input, "\n")] = '\0'可以把第一个换行改成终止零；没有换行时会找到原来的字符串末尾，相当于把已有终止零再写一次，使用前要先确认读取成功；</p>
+<p><i>字符串与字节比较：</i></p>
+<p>strcmp比较两个字符串，遇到终止零结束，返回0表示相等，负数或正数表示大小，不保证只返回-1或1；memcmp比较指定数量的字节，中途遇到0也继续，适合二进制数据，但双方范围都必须有效；</p>
+<p><i>内存复制：</i></p>
+<p>memcpy只复制指定数量的字节，不自动检查容量，也不自动补字符串终止零，源和目标不能重叠；可能重叠时用memmove，复制完成不代表一定得到有效字符串；</p>
+<p><i>生命周期与悬空指针：</i></p>
+<p>函数里的普通局部数组在函数返回后失效，动态分配的对象在free后失效；指针里即使还保留旧地址，那里也暂时还有旧字节，都不代表还能合法访问；</p>
+<p><i>常见存储位置：</i></p>
+<p>普通局部变量常在栈或寄存器，动态分配对象通常在堆，全局和静态对象通常一直存在到程序结束；这些是常见实现，不代表每个局部变量都一定占一个栈位置；</p>
+<p><i>字符串字面量：</i></p>
+<p>char *p="cat"让指针指向字符串字面量，不能通过p修改它；char p[]="cat"则建立一个可写数组，可以修改里面的字符；</p>
+<p><i>整数提升：</i></p>
+<p>小整数运算前可能先提升成int；当前环境里两个unsigned char值250和10相加，先得到int类型的260，若再保存到8位无符号变量里才变成4，不能直接认为整个加法只用了8位；</p>
+<p><i>有符号与无符号混合：</i></p>
+<p>运算或比较前，类型可能先统一；当前环境里int的-1与unsigned int的1比较，-1会转成很大的无符号数，所以-1&lt;1可能得到假，要先看类型转换再判断大小；</p>
+<p><i>无符号回绕：</i></p>
+<p>n位无符号类型按模2ⁿ处理超出的值，如转换到8位无符号类型时，256变0，260变4；但表达式可能先提升成int计算，再在保存时转换，两个阶段要分清；</p>
+<p><i>有符号溢出：</i></p>
+<p>C17里有符号整数计算超范围属于未定义行为，不能保证自动绕回；某次运行刚好得到最小负数，也不能当作其他编译方式都会如此；</p>
+<p><i>窄化与扩展：</i></p>
+<p>转成较窄的无符号类型时按目标范围取模，转成放不下的有符号类型时，C17结果要看实现；零扩展是在高位补0，符号扩展是复制符号位，汇编里movzx常用于零扩展，movsx常用于符号扩展；</p>
+<p><i>C的移位规则：</i></p>
+<p>先看左边经过提升后的类型和位宽，移位次数不能为负，也不能达到或超过该位宽；C17里负有符号数左移是未定义行为，负有符号数右移的结果看实现，不能直接照搬Python或机器指令的规则；</p>
+<p><i>未定义行为：</i></p>
+<p>未定义行为是C标准不再保证会怎样，不等于一定报错或崩溃；越界、使用失效对象、有符号溢出等，都可能暂时看起来正常，不能用“没崩溃”证明合法；</p>
+<p><b>机器代码与函数调用：</b></p>
+<p><i>编译过程：</i></p>
+<p>大致经过预处理、编译、汇编、链接；预处理处理头文件和宏，编译分析并生成代码，汇编生成机器代码，链接把各部分和外部引用接起来；</p>
+<p><i>编译选项：</i></p>
+<p>-std=c17指定语言规则，-Wall -Wextra开启常用警告，-g加入调试信息，-O0便于入门观察，-o指定输出文件；有调试信息不代表完整保存原始源码，不优化也不代表一行C只对应一条指令；</p>
+<p><i>寄存器宽度：</i></p>
+<p>rax是64位，eax是它的低32位，ax是低16位，al是低8位；x86-64里写eax会把rax高32位清零，写al通常只改低8位，所以看结果要注意到底写了多宽；</p>
+<p><i>内存操作数：</i></p>
+<p>Intel语法里mov eax, DWORD PTR [地址]表示从该地址读4字节到eax；BYTE、WORD、DWORD、QWORD分别表示1、2、4、8字节，地址可以由基址、索引乘比例和偏移组成；</p>
+<p><i>mov与lea：</i></p>
+<p>mov rax, [地址]读取那里的内容，lea rax, [地址表达式]只算出地址，不读取内容；lea也可以用来做乘加计算，不能看见方括号就认定访问了内存；</p>
+<p><i>比较与标志位：</i></p>
+<p>cmp按减法结果设置标志但不保存差值，test按位与后设置标志但不保存结果，常用来检查是否为0；ZF看结果是否为0，SF看结果最高位，CF与无符号进位借位有关，OF与有符号溢出有关；</p>
+<p><i>条件跳转：</i></p>
+<p>比较后的跳转决定按什么规则理解结果，jl、jg等用于有符号大小，jb、ja等用于无符号大小；je和jz都表示相等或零条件，jne和jnz表示不相等或非零，不能只看cmp就判断分支；</p>
+<p><i>条件变成数值：</i></p>
+<p>sete al在相等时把al设为1，否则设为0，再用movzx eax, al扩展成完整整数；条件既可以决定跳哪，也可以直接变成0或1；</p>
+<p><i>普通函数参数：</i></p>
+<p>Linux x86-64 System V约定里，常见整数和指针参数前6个依次放rdi、rsi、rdx、rcx、r8、r9；看strcmp调用时，重点找前两个参数指向哪里，这套顺序不能直接套到所有平台和所有类型；</p>
+<p><i>函数返回值：</i></p>
+<p>普通整数或指针返回值常放rax或其低位部分，返回int通常看eax，返回指针通常看rax；strcmp返回int，判断正负时要按eax的32位有符号值看；</p>
+<p><i>寄存器保存：</i></p>
+<p>部分寄存器要求被调用函数改了就恢复，如rbx、rbp、r12到r15；参数寄存器等则可能在调用后改变，不能默认call前后的值相同，要追踪数据有没有另存；</p>
+<p><i>call与ret：</i></p>
+<p>call保存返回地址，再跳到目标函数，ret从栈里取返回地址并跳回；call不会自动保存所有寄存器，也不会自动替所有参数安排存储空间；</p>
+<p><i>栈帧：</i></p>
+<p>常见入门代码先保存旧rbp，让rbp作为当前位置的参考，再向低地址调整rsp，留出局部存储空间；这种布局里[rbp]常是旧rbp，[rbp+8]常是返回地址，但优化后的函数可能完全不同；</p>
+<p><i>栈空间与对齐：</i></p>
+<p>栈预留空间除了变量，还可能包含临时数据和对齐填充，不能全部当作数组容量；普通System V调用前通常要求16字节对齐，call压入8字节返回地址后，函数入口的对齐状态会相应改变；</p>
+<p><i>函数调用与系统调用：</i></p>
+<p>调用库函数和直接请求内核不同，库函数可能先处理缓冲等事情再调用内核；Linux x86-64系统调用号放rax，参数常用rdi、rsi、rdx、r10、r8、r9，第4个参数与普通函数调用不同；</p>
+<p><b>ELF与动态链接：</b></p>
+<p><i>ELF基本属性：</i></p>
+<p>ELF不只用于可执行程序，也用于.o目标文件、.so共享库等；先看位数、端序、架构、文件类型、入口和加载信息，readelf的-h看头，-l看程序头，-S看节头；</p>
+<p><i>节与段：</i></p>
+<p>节偏向文件内容怎么分类，段偏向运行时怎么加载；.text常放指令，.rodata常放只读数据，.data常放有初值的可写数据，.bss常表示需要补零的空间；一个段可以包含多个节，不能把两者当成同一种结构；</p>
+<p><i>三种位置：</i></p>
+<p>文件偏移是字节在文件哪里，ELF虚拟地址是文件布局里记录的地址，运行时地址是这次进程实际使用的地址；数字碰巧相同也不代表概念相同；</p>
+<p><i>地址换算：</i></p>
+<p>先找到目标所属的LOAD段，在有对应文件字节的范围内，文件偏移=段的文件起点+(目标ELF地址-段的ELF地址起点)；如果属于加载后补零的部分，就没有对应的原文件字节；</p>
+<p><i>PIE与ASLR：</i></p>
+<p>PIE让主程序能够放到不同基址，ASLR是在运行时随机安排地址；两者有关但不同，PIE程序不保证每次地址都变，非PIE程序的栈和共享库也可能随机化；</p>
+<p><i>加载偏移：</i></p>
+<p>普通PIE映像里，运行时地址=加载偏移+ELF虚拟地址；这里加的是ELF虚拟地址，不能直接拿文件偏移加基址；</p>
+<p><i>符号与去符号：</i></p>
+<p>符号把函数、全局数据等与名字关联，方便工具显示main、check等名称；去符号后可能只剩自动编号，但函数仍然存在，动态链接需要的部分名字也可能保留；</p>
+<p><i>PLT与GOT：</i></p>
+<p>程序调用共享库函数时，需要找到它本次运行的真实地址；一种常见方式是先到PLT跳板，再读取GOT表里的地址，最后跳到实际函数；PLT主要是跳转代码，GOT主要保存地址等数据；</p>
+<p><i>重定位：</i></p>
+<p>重定位信息告诉装载和链接过程，哪些位置需要按什么规则处理；字段写Offset也不一定是文件偏移，本例函数地址槽对应的是虚拟地址，要结合具体记录理解；</p>
+<p><i>惰性绑定与立即绑定：</i></p>
+<p>惰性绑定是第一次调用时才找函数地址，立即绑定是在启动装载时就解析；本例发现BIND_NOW，说明要求立即绑定，不能因为还有PLT就认定一定是首次调用才解析；</p>
+<p><i>RELRO：</i></p>
+<p>RELRO与完成重定位后把相关区域设为只读有关；判断保护情况还要看GNU_RELRO段、覆盖范围、绑定方式和运行权限，单看BIND_NOW不能证明已经完整核验RELRO；</p>
+<p><b>GDB动态调试：</b></p>
+<p><i>调试现场：</i></p>
+<p>GDB观察正在运行或暂停的程序，start通常运行到main附近停下；进程已经退出时出现No registers，通常只是没有可读取的活动现场，需要先重新运行；</p>
+<p><i>断点位置：</i></p>
+<p>可以按函数名、函数加偏移或绝对地址设置断点；函数名断点不保证正好停在第一条指令，旧的绝对地址可能因重新运行或编译而失效；十进制112等于0x70，不等于0x112；</p>
+<p><i>查看指令与数据：</i></p>
+<p>x/i $pc看当前待执行指令，x/s $rdi把rdi指向的内容当字符串看，x/16bx $rdi看16个十六进制字节；含0的二进制数据应按长度看字节，不能只用字符串方式看；</p>
+<p><i>单步与返回：</i></p>
+<p>si执行一条指令，遇到调用可以进入函数；ni跨过调用，finish运行到当前函数返回；跨过不是跳过不执行，被调用函数仍然真正运行，也可能等待输入；</p>
+<p><i>返回值与变量保存：</i></p>
+<p>停在call后面的mov时，函数可能已经返回，eax已有结果，但mov还没执行，局部变量可能还没更新；GDB当前显示的指令通常是下一条要执行的，不是刚执行完的；</p>
+<p><i>不同位置的零：</i></p>
+<p>strcmp返回0表示字符串相等，本例check返回0表示校验失败，main返回0表示正常结束；零的含义要看是谁返回的，程序正常退出不代表口令匹配；</p>
+<p><b>Ghidra静态分析：</b></p>
+<p><i>导入与平台：</i></p>
+<p>Windows上的Ghidra可以直接分析Linux ELF，不需要先转成Windows程序；导入配置里的x86、小端、64位等说明分析采用的架构规则，不单凭这个就能证明原编译器版本；</p>
+<p><i>PIE与共享对象标识：</i></p>
+<p>PIE可执行文件常与共享库一样使用ET_DYN类型，所以工具写shared object时，不一定就是普通动态库，还要结合入口、解释器和PIE标志判断；</p>
+<p><i>导入提示：</i></p>
+<p>静态工具没模拟某项运行时重定位，不代表真实程序一定运行失败；项目里没导入完整libc，也不代表不能分析puts、fgets、strcmp等外部调用；</p>
+<p><i>反编译结果：</i></p>
+<p>反编译是根据机器代码推测一种接近高级语言的写法，不是逐字找回原源码；变量名、类型、分支顺序都可能不同，要还原实际行为，不要只追求看起来像原代码；</p>
+<p><i>本例输入流程：</i></p>
+<p>程序先读取最多32字节容量的输入，检查读取是否成功，去掉换行，再交给check；check的结果非0输出匹配，为0输出不匹配，正常完成后main仍可返回0；</p>
+<p><i>分支判断：</i></p>
+<p>if成立走成功，与if不成立走失败，可以是同一种逻辑的不同写法；条件取反再交换两个分支，行为不变，要看真实比较值、跳转条件和每条路径的输出；</p>
+<p><i>变量命名：</i></p>
+<p>反编译器可能让一个临时变量先保存错误状态，再保存校验结果，最后保存退出码；不能看见它有一次表示匹配就全部改名为ok，要检查所有赋值和使用位置；</p>
+<p><i>字符串与交叉引用：</i></p>
+<p>可以从匹配、不匹配等提示文字找到使用位置，再追到输入和校验函数；交叉引用只说明某处引用了这个地址，不保证那条路径一定执行；DAT开头通常只是自动数据标签，不是错误；</p>
+<p><i>保存分析与修改程序：</i></p>
+<p>在Ghidra里改函数名、变量名、注释和类型，通常只改分析项目，不会自动改原始ELF；修改机器指令并导出新程序是另一件事；</p>
+<p><b>保护代码与独立分析：</b></p>
+<p><i>栈金丝雀：</i></p>
+<p>栈金丝雀可以理解为放在栈上的保护值，函数开始保存，返回前检查，有变化就进入失败处理；它是编译器加入的保护，不是口令算法，也不能发现所有越界或保护所有内存；</p>
+<p><i>FS相关访问：</i></p>
+<p>本例fs:0x28与栈保护值有关，反编译里的in_FS_OFFSET不一定是源码声明的普通变量；看到这类读取、比较和__stack_chk_fail，要结合上下文识别保护逻辑；</p>
+<p><i>endbr64：</i></p>
+<p>endbr64与间接跳转保护有关，看到它说明程序包含这类入口指令；保护是否真正启用，还要看硬件、系统和运行设置，不能只凭一条指令判断全部保护情况；</p>
+<p><i>陌生程序的分析入口：</i></p>
+<p>没有main或check名字时，可以从输入函数、成功失败字符串、导入函数、入口、常量和循环开始找；函数名只是线索，不是必须条件；</p>
+<p><i>输入数据流：</i></p>
+<p>先追输入来自哪、存在哪、最多读多少、有没有去换行或变换，再看传给谁、是否还用到全局数据；读进来的内容不一定就是最后参与校验的内容；</p>
+<p><i>循环与字节变换：</i></p>
+<p>分析时记下长度要求、下标范围、每次处理几字节、是否符号扩展、做了哪些加减异或或查表、哪里失败、怎样才成功；还原通常倒着做，但掩码和丢位可能损失信息，不一定能唯一恢复；</p>
+<p><i>候选输入验证：</i></p>
+<p>算出候选输入后，要代回全部条件并实际检查；找到一个能通过的输入，不等于找到所有输入，更不等于证明答案唯一；一次输出PASS，只说明那个输入在那次运行里通过；</p>
+<p><b>Pwn工具与保护机制：</b><a href="https://lambda.monster/2026/11/08/Pwn%E5%B7%A5%E5%85%B7%E4%B8%8E%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/"></a>Pwn工具与保护机制</p>
+<p><b>Pwn工具：</b></p>
+<p><i>IDA静态分析：</i></p>
+<p>函数列表用来找已命名的函数，字符串列表用来找输入提示、成功消息和报错。图形汇编适合看分支怎么走，线性汇编适合核对指令和地址，伪代码适合先读整体逻辑。遇到类型、读取宽度或比较条件不清楚时，回到汇编确认。</p>
+<p><i>IDA常用快捷键：</i></p>
+<p>Shift+F3打开函数列表，Shift+F12打开字符串列表，F5反编译当前函数，Tab在汇编和伪代码之间切换，Space切换图形与线性汇编。G跳到地址或名称，Esc回到上一处，X查看交叉引用，N重命名，Y编辑类型。</p>
+<p><i>从线索追到实际逻辑：</i></p>
+<p>找到成功或失败提示后，用交叉引用找到输出它的位置，再往回看哪个条件会走到这里。也可以从输入函数的调用处开始，检查数据写到哪里、最多写多少、后面交给谁处理。看见条件跳转时，要跟到目标位置确认它实际做了什么。</p>
+<p><i>IDA与GDB对照：</i></p>
+<p>IDA用来定位代码，GDB用来确认实际运行时的参数、内存和分支。两边地址不同时，先确认分析的是同一份ELF，再核对函数内偏移和机器指令。重新编译后，以新文件里的指令为准。</p>
+<p><i>pwntools启动与连接：</i></p>
+<p>process()启动本地程序，remote(host, port)连接网络服务，两者可以用同一套基础收发方法。ELF()解析文件，context.binary可以根据文件设置架构、位宽和字节序。interactive()把后续收发交给键盘和终端，close()关闭通信。</p>
+<p><i>按提示收发字节：</i></p>
+<p>recvuntil()读到指定字节，recvline()读到换行，recv(n)最多读n个字节。send()原样发送，sendline()在末尾追加换行，sendlineafter()先等提示再发一行。提示中的空格也参与匹配，一次发送的数据可能分多次收到。</p>
+<p><i>交互卡住怎么查：</i></p>
+<p>打开context.log_level = "debug"查看实际收发，把sendlineafter()拆成接收和发送两步，检查双方分别在等什么。常见原因是提示多了空格、目标在等换行，或者脚本正在等待一条还没输出的消息。b'\n'收到的是一个换行字节，b''是空字节串，可能来自接收超时。</p>
+<p><i>整数与字节转换：</i></p>
+<p>p32()把整数打包成4字节，p64()打包成8字节，u32()和u64()把字节还原为整数。位宽决定占几字节，字节序决定这些字节怎么排，偏移决定从第几个字节开始放。发送原始数据时，用.hex(" ")核对实际字节，再用send()发送。</p>
+<p><i>定位偏移与摆放数据：</i></p>
+<p>cyclic()生成可定位的字节序列，cyclic_find()根据观察到的片段查它从哪里开始。生成和查找要使用相同的n和字母表，n表示定位片段长度。flat()可以按偏移放数据，偏移从0开始，偏移9前面有9个字节。</p>
+<p><i>符号、PLT与GOT：</i></p>
+<p>elf.symbols查符号地址，elf.plt查调用外部函数时可经过的跳板入口，elf.got查保存地址的槽位。GOT槽位地址用来定位和查页权限，槽位里的值用来判断它目前指向哪里。要看槽位当前内容，可以在运行时用GDB读取。</p>
+<p><i>启动调试与附加进程：</i></p>
+<p>gdb.debug()在调试器下启动新进程，gdb.attach()附加到已有进程。GDB里的start尝试停在main附近，starti停在启动的第一条指令，动态链接程序可能先停在动态加载器里。</p>
+<p><i>Pwndbg查看运行现场：</i></p>
+<p>context集中显示寄存器、指令和栈，telescope从指定地址查看数据并跟踪指针，vmmap查看内存范围、页权限和所属模块。查某个地址属于哪一段时，范围包含起点，排除终点。x/2i看两条指令，x/gx读取8字节并用十六进制显示。</p>
+<p><i>ROPgadget搜索与核对：</i></p>
+<p>gadget是一小段已有指令，常以ret结尾。ROPgadget可以先列出候选，再用GDB核对运行时地址和实际指令。检查每条指令改了哪些寄存器、读写了哪里、栈指针前进了多少。pop寄存器会改寄存器，pop到内存会产生写入，ret会从栈取出下一条指令的地址。</p>
+<p><i>模块基址与运行时地址：</i></p>
+<p>先判断地址属于主程序、libc还是其他模块，再把同一模块的相对偏移加到本次运行的模块基址上。反过来，已知运行时地址和对应的模块内偏移，相减就能求基址。vmmap里的Offset表示这段映射对应的文件偏移，换算前要先分清用的是哪种坐标。</p>
+<p><b>保护机制：</b></p>
+<p><i>checksec怎么看：</i></p>
+<p>pwn checksec 文件可以查看架构、位宽、字节序，以及Canary、NX、PIE、RELRO等文件级线索。要确认某个函数受不受保护，看反汇编。要确认本次运行的地址和页权限，看vmmap。</p>
+<p><i>Canary栈保护：</i></p>
+<p>受保护的函数会在进入时把保护值存到栈上，返回前再检查。值变了，通常会调用__stack_chk_fail。分析一次写入时，要看具体函数有没有检查、写入范围会不会碰到保护值、检查在什么时候执行。checksec显示Canary found后，还要查目标函数的指令。</p>
+<p><i>NX执行权限：</i></p>
+<p>内存页的r、w、x分别表示可读、可写、可执行。栈显示rw-p时，程序可以读写栈，从该页取指令执行会受限，所以越界写仍可能发生。判断某处能不能执行，先找地址所在的页，再看权限有没有x。</p>
+<p><i>PIE与ASLR：</i></p>
+<p>PIE让主程序可以换基址，ASLR负责在运行时随机安排映射地址。同一份文件的模块内偏移通常固定，每次运行的基址可能变化。主程序关闭PIE时，共享库和栈仍可能随机化。用GDB比较多次运行时，可以先用show disable-randomization确认调试器设置。</p>
+<p><i>RELRO与绑定时机：</i></p>
+<p>动态链接器把外部函数的实际地址填入相应槽位。Partial RELRO会保护部分区域，采用延迟绑定的PLT相关槽位通常仍需可写。Full RELRO通常配合启动时绑定，填好后把相关页设为只读。只读页仍然可以读出槽位的值，判断能否写入时要查槽位本身所在的页。</p>
+<p><i>换一个样本怎么查：</i></p>
+<p>先用checksec看文件属性，再从IDA里找目标函数和相关指令，最后用GDB或Pwndbg核对运行地址、数据和页权限。做对照实验时一次只改变一个保护选项。记录时把文件里看到的属性、具体指令做的事和运行时观察到的结果分开。</p>
+<h1>做了什么题：</h1>
+<h2>第六十四枚星符 wp</h2>
+<p>连接容器后，给出flag的密文，直接解base解不开，推测为换表base解码；</p>
+<p>用flag前缀SYC尝试</p>
+<img src="/img/极客2026wp/第六十四枚星符.png" style="display:block; margin:0 auto;" alt="">
+<p>前缀对上了，3字节对4字符，是换表base64编码，解码得</p>
+<p>SYC{638151c3-a463-4c2e-a085-8847b403cf12}（每次连的解码结果好像不一样）</p>
+<h2>真相只有喵知道！ wp</h2>
+<p>附件里是一段wav喵</p>
+<p>在频谱图里发现了二维码，但扫不出来喵</p>
+<img src="/img/极客2026wp/真相只有喵知道！01.png" style="display:block; margin:0 auto;" alt="">
+<p>用工具发现是29*29的二维码喵</p>
+<img src="/img/极客2026wp/真相只有喵知道！02.png" style="display:block; margin:0 auto;" alt="">
+<p>复原得到这个二维码喵</p>
+<img src="/img/极客2026wp/真相只有喵知道！03.png" style="display:block; margin:0 auto;" alt="">
+<p>扫出flagSYC{mia0Miaom1ao_mi4O_mIaoMiao_mi4om1a0}喵</p>
+<h2>拼刀刀 wp</h2>
+<p>一个PE文件,打开让链接容器，连接完后注册账号</p>
+<p>查看自己的邀请码，发现是KD-1357246A，查看输入好友邀请码，</p>
+<img src="/img/极客2026wp/拼刀刀01.png" style="display:block; margin:0 auto;" alt="">
+<p>随便输一个，发现格式不正确，那邀请码格式应该是KD-开头的</p>
+<p>ida反编译，在能解析的字符串里找到KD-%08X</p>
+<p>找到交叉引用，发现邀请码是通过与0x13572468异或构成的</p>
+<img src="/img/极客2026wp/拼刀刀02.png" style="display:block; margin:0 auto;" alt="">
+<p>则sub_40AB48为生成邀请码的函数，接下来就要找哪些值与这个异或构成邀请码</p>
+<p>交叉引用发现，sub_40A918函数在调用sub_40AB48函数，sub_40A918函数在判断值是否为6或1000，</p>
+<img src="/img/极客2026wp/拼刀刀03.png" style="display:block; margin:0 auto;" alt="">
+而v7这个值的由来，在函数sub_40AA90中
+<img src="/img/极客2026wp/拼刀刀04.png" style="display:block; margin:0 auto;" alt="">
+<p>可已分析出，6和1000的比较是其十六进制与0x13572468异或再与其异或变回自身来进行比较的。</p>
+<p>所以算出6对应的邀请码为KD-1357246E，1000对应的邀请码为KD-13572780</p>
+<p>输入试一下</p>
+<p>输入KD-1357246E发现进度满了，但被诈了，进度回退到90%，思路正确，6和1000为特殊值；</p>
+<img src="/img/极客2026wp/拼刀刀05.png" style="display:block; margin:0 auto;" alt="">
+<p>在输入KD-13572780，进度满了，成功提取flag</p>
+<img src="/img/极客2026wp/拼刀刀06.png" style="display:block; margin:0 auto;" alt="">
+<p>SYC{508720f0-6b7b-47e9-99df-5ebbf62694b1}</p>
+<p><del>（从初始编号来看，其实KD-1357246A解异或对应2，在这之前我还注册了一个账号为KD-13572469解异或对应1，那6和1000应该对应注册账号序号，那我注册1000个账号挨个砍一刀也能拿到flag😋）</del></p>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/11/08/%E5%91%A8%E6%8A%A5week3/">https://lambda.monster/2026/11/08/%E5%91%A8%E6%8A%A5week3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%91%A8%E6%8A%A5/">周报</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">学了什么：</span></a></li><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">做了什么题：</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">第六十四枚星符 wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">真相只有喵知道！ wp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.3.</span> <span class="toc-text">拼刀刀 wp</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/08/%E5%91%A8%E6%8A%A5week3/" title="周报week3">周报week3</a><time datetime="2026-11-08T05:23:10.867Z" title="发表于 2026-11-08 13:23:10">2026-11-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/08/Pwn%E5%B7%A5%E5%85%B7%E4%B8%8E%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/" title="Pwn工具与保护机制">Pwn工具与保护机制</a><time datetime="2026-11-07T17:40:31.631Z" title="发表于 2026-11-08 01:40:31">2026-11-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/07/ctf%E5%9F%BA%E7%A1%80%EF%BC%9AC%EF%BC%8C%E6%B1%87%E7%BC%96/" title="ctf基础：C，汇编">ctf基础：C，汇编</a><time datetime="2026-11-07T04:45:29.071Z" title="发表于 2026-11-07 12:45:29">2026-11-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/01/%E5%91%A8%E6%8A%A5week2/" title="周报week2">周报week2</a><time datetime="2026-11-01T06:08:56.862Z" title="发表于 2026-11-01 14:08:56">2026-11-01</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/31/ctf%E5%9F%BA%E7%A1%80%EF%BC%9A%E6%95%B0%E5%88%B6%EF%BC%8C%E6%96%87%E6%9C%AC%EF%BC%8C%E7%BC%96%E7%A0%81%EF%BC%8C%E5%8A%A0%E5%AF%86/" title="ctf基础：数制，文本，编码，加密">ctf基础：数制，文本，编码，加密</a><time datetime="2026-10-31T05:24:46.715Z" title="发表于 2026-10-31 13:24:46">2026-10-31</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
