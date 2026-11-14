@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>ret2text与ret2shellcode | Blog！！！</title><meta name="author" content="Lambda"><meta name="copyright" content="Lambda"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="ret2text与ret2shellcode概念说是，有时间了会重写补全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ret2text与ret2shellcode">
+<meta property="og:url" content="https://lambda.monster/2026/11/15/ret2text%E4%B8%8Eret2shellcode/index.html">
+<meta property="og:site_name" content="Blog！！！">
+<meta property="og:description" content="ret2text与ret2shellcode概念说是，有时间了会重写补全">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lambda.monster/img/avatar.jpg">
+<meta property="article:published_time" content="2026-11-14T18:46:18.179Z">
+<meta property="article:modified_time" content="2026-11-14T19:55:47.637Z">
+<meta property="article:author" content="Lambda">
+<meta property="article:tag" content="Pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lambda.monster/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "ret2text与ret2shellcode",
+  "url": "https://lambda.monster/2026/11/15/ret2text%E4%B8%8Eret2shellcode/",
+  "image": "https://lambda.monster/img/avatar.jpg",
+  "datePublished": "2026-11-14T18:46:18.179Z",
+  "dateModified": "2026-11-14T19:55:47.637Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Lambda",
+      "url": "https://lambda.monster"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lambda.monster/2026/11/15/ret2text%E4%B8%8Eret2shellcode/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'ret2text与ret2shellcode',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/three-columns.css"><link rel="stylesheet" href="/css/post-banner.css"><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/post-banner.gif);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">龟速学习中...</span></a><a class="nav-page-title" href="/"><span class="site-name">ret2text与ret2shellcode</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">ret2text与ret2shellcode</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-11-14T18:46:18.179Z" title="发表于 2026-11-15 02:46:18">2026-11-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-11-14T19:55:47.637Z" title="更新于 2026-11-15 03:55:47">2026-11-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><div lang="zh-CN" style="line-height:1.6;color:inherit;">
+
+<h1 style="font-size:2em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">ret2text 与 ret2shellcode 概念</h1>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">1. 寄存器、栈与返回</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">寄存器</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">本轮用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rip</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">当前执行位置</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rsp</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">当前栈顶地址</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rbp</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">使用帧指针时定位当前栈帧的基准</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">必须区分三层：</p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">rsp 的值 → 槽位在哪里
+rsp 指向的内存内容 → 槽位里存了什么
+该内容若为代码地址 → 跳过去执行什么
+</code></pre>
+<h3 style="font-size:1.25em;margin:24px 0 16px;font-weight:600;line-height:1.25">1.1 call、pop 与 ret</h3>
+<p style="margin:0 0 16px">本笔记讨论普通的 x86-64 近调用、返回，以及 64 位寄存器的栈操作：</p>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">指令</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">核心作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">call 目标</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">压入下一条指令的地址，再跳到目标</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">pop 寄存器</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">取栈顶 8 字节到寄存器，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rsp</code> 增加 8</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0"><code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">ret</code></td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">取栈顶地址作为跳转目标，<code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">rsp</code> 增加 8</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px"><strong>覆盖保存的返回地址只是在修改内存，不会立刻跳转。</strong></p>
+<pre style="padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#383838;color:#f2f2f2;border-radius:6px;margin:0 0 16px"><code style="font-family:Consolas,monospace;font-size:inherit;background:transparent;padding:0;color:inherit">read 写入并发生溢出
+  ↓
+read 返回，继续执行 vuln 后续指令
+  ↓
+vuln 执行 ret
+  ↓
+使用被修改的返回地址
+</code></pre>
+<p style="margin:0 0 16px">不同函数调用有各自保存的返回地址。覆盖 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">vuln</code> 的返回地址，不等于覆盖 <code style="font-family:Consolas,monospace;font-size:85%;padding:.2em .4em;background-color:#444444;color:#f2f2f2;border-radius:4px">read</code> 的返回地址。</p>
+<p style="margin:0 0 16px">栈向低地址增长与数组向高地址依次写入并不矛盾：前者描述栈空间分配，后者描述数组元素地址。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">2. 返回地址受损与执行权限</h2>
+<p style="margin:0 0 16px">ret2text 指控制流被异常转移到程序已有的代码。ret2shellcode 指控制流被异常转移到作为数据写入的机器指令。栈上的返回地址受损时，程序可能崩溃，也可能跳到意外位置。NX 将数据页标记为不可执行，可阻止在这些页上直接执行指令。修复应从写入长度与缓冲区容量的检查入手。</p>
+
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">3. 栈帧与返回地址损坏</h2>
+<p style="margin:0 0 16px">函数执行期间，栈帧可能存放局部变量、保存的寄存器和返回所需的信息。实际布局取决于 ABI、编译器和优化选项。越界写可能先破坏其他数据，直到函数返回时才表现为控制流异常。崩溃的位置与最初发生越界写的位置可能相隔很远。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">4. 已有代码与注入代码</h2>
+<p style="margin:0 0 16px">ret2win 是 ret2text 的常见教学例子，目标是程序里已有的函数。ret2shellcode 涉及将数据当作机器指令执行，因此与内存页的执行权限直接相关。即使目标是已有代码，函数也可能依赖调用者按 ABI 准备参数、栈对齐和返回状态。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">5. 调用约定与栈对齐</h2>
+<p style="margin:0 0 16px">调用约定规定参数和返回值放在哪里、哪些寄存器要保留，以及函数入口处栈应满足的对齐要求。正常的函数调用会按这些约定安排状态。分析异常控制流时，要把“到达某条指令”和“满足该指令或函数的运行前提”分开判断。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">6. 函数调用与系统调用</h2>
+<p style="margin:0 0 16px">普通函数调用在用户态代码之间传递控制。系统调用通过处理器支持的入口请求内核服务，使用独立的编号和参数约定。两者在反汇编中可能相邻出现，但含义及需要检查的状态不同。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">7. 保护机制与修复</h2>
+<p style="margin:0 0 16px">NX 限制数据页执行。ASLR 改变部分内存区域的运行时位置。栈金丝雀帮助检测部分栈帧破坏。这些措施各自覆盖不同阶段。定位根因时，应检查输入长度、目标缓冲区容量和字符串终止符所需空间。</p>
+
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">8. 指令、数据与内存权限</h2>
+<p style="margin:0 0 16px">CPU 按指令指针指向的位置取指。相同的字节既可作为整数或字符串读取，也可能被解释为机器指令，具体取决于访问方式和内存权限。读、写、执行是三种不同的权限。就算一块内存可写，也未必能从那里取指。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">9. 两类异常控制流的比较</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">对照项</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">ret2text</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">ret2shellcode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">指令来源</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">程序已经包含的代码</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">运行过程中写入的数据</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">控制流异常</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">进入非预期的已有代码</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">把数据解释为指令</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">NX 的影响</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">已有代码页通常本来就可执行</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">数据页不可执行时无法从该页取指</td>
+</tr>
+</tbody>
+</table>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">10. 寄存器与栈槽保存的是不同状态</h2>
+<p style="margin:0 0 16px">指令指针描述当前执行位置，栈指针描述当前栈顶位置。栈中的返回信息是保存在内存里的数据。一次越界写可能只改变内存，寄存器在当下仍看起来正常。等到函数使用受损的数据时，异常才会显现。</p>
+<h2 style="font-size:1.5em;margin:24px 0 16px;font-weight:600;line-height:1.25;padding-bottom:.3em;border-bottom:1px solid #d1d9e0">11. 保护机制各自覆盖什么</h2>
+<table style="border-collapse:collapse;margin-bottom:16px;display:block;max-width:100%;overflow:auto">
+<thead>
+<tr>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">机制</th>
+<th style="padding:6px 13px;border:1px solid #d1d9e0;font-weight:600">观察或约束</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">NX</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">控制内存页能否取指</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">ASLR</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">改变运行时内存布局</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">栈金丝雀</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">在函数返回前检测部分栈帧破坏</td>
+</tr>
+<tr>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">边界检查</td>
+<td style="padding:6px 13px;border:1px solid #d1d9e0">从源头阻止超出容量的写入</td>
+</tr>
+</tbody>
+</table>
+<p style="margin:0 0 16px">这些机制作用于不同环节。触发保护说明程序检测到异常或拒绝了某种访问，根因仍可能是更早的不正确长度计算。</p>
+
+</div>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://lambda.monster">Lambda</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://lambda.monster/2026/11/15/ret2text%E4%B8%8Eret2shellcode/">https://lambda.monster/2026/11/15/ret2text%E4%B8%8Eret2shellcode/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://lambda.monster" target="_blank">Blog！！！</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Pwn/">Pwn</a></div><div class="post-share"><div class="social-share" data-image="/img/avatar.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Lambda</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">5</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">你要康康我的笔记嘛(^q^)!!!<br> 那可以先康康这个吗→<a target="_blank" rel="noopener" href="http://localhost:4000/2026/10/25/README/">README</a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">ret2text 与 ret2shellcode 概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1. 寄存器、栈与返回</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1 call、pop 与 ret</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">2. 返回地址受损与执行权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">3. 栈帧与返回地址损坏</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">4. 已有代码与注入代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.5.</span> <span class="toc-text">5. 调用约定与栈对齐</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.6.</span> <span class="toc-text">6. 函数调用与系统调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.7.</span> <span class="toc-text">7. 保护机制与修复</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.8.</span> <span class="toc-text">8. 指令、数据与内存权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.9.</span> <span class="toc-text">9. 两类异常控制流的比较</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.10.</span> <span class="toc-text">10. 寄存器与栈槽保存的是不同状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.11.</span> <span class="toc-text">11. 保护机制各自覆盖什么</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/15/%E6%A0%88%E6%BA%A2%E5%87%BA%E5%9F%BA%E7%A1%80/" title="栈溢出">栈溢出</a><time datetime="2026-11-14T18:46:24.957Z" title="发表于 2026-11-15 02:46:24">2026-11-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/15/%E5%A3%B3%E4%B8%8E%E8%84%B1%E5%A3%B3%E5%9F%BA%E7%A1%80/" title="壳与脱壳">壳与脱壳</a><time datetime="2026-11-14T18:46:22.822Z" title="发表于 2026-11-15 02:46:22">2026-11-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/15/ret2text%E4%B8%8Eret2shellcode/" title="ret2text与ret2shellcode">ret2text与ret2shellcode</a><time datetime="2026-11-14T18:46:18.179Z" title="发表于 2026-11-15 02:46:18">2026-11-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/08/%E5%91%A8%E6%8A%A5week3/" title="周报week3">周报week3</a><time datetime="2026-11-08T05:23:10.867Z" title="发表于 2026-11-08 13:23:10">2026-11-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/11/08/Pwn%E5%B7%A5%E5%85%B7%E4%B8%8E%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6/" title="Pwn工具与保护机制">Pwn工具与保护机制</a><time datetime="2026-11-07T17:40:31.631Z" title="发表于 2026-11-08 01:40:31">2026-11-08</time></div></div></div></div></div></div></main><footer id="footer" style="background-color: #222222;"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Lambda</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="请输入文本......" type="text"/></div><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.7.0"></script></div></div></body></html>
